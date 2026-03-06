@@ -1,0 +1,12 @@
+gx_0226\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/list.c
+gx_0226\list.o: D:\Keil5_MDK\ARM\ARMCC\Bin\..\include\stdlib.h
+gx_0226\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
+gx_0226\list.o: D:\Keil5_MDK\ARM\ARMCC\Bin\..\include\stddef.h
+gx_0226\list.o: D:\Keil5_MDK\ARM\ARMCC\Bin\..\include\stdint.h
+gx_0226\list.o: ../Core/Inc/FreeRTOSConfig.h
+gx_0226\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
+gx_0226\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
+gx_0226\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
+gx_0226\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1/portmacro.h
+gx_0226\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
+gx_0226\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
