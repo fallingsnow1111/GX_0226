@@ -30,5 +30,5 @@
 #include "stm32f7xx_hal.h"写在main.h里,各个外设的.h文件，若报找不到类型定义的错，请把main.h包含进来。
 配置TIM14为systick的时钟源时，会在mian.c自动生成HAL_TIM_PeriodElapsedCallback
 
-只在Gyro_Init()时进入串口2的中断，后面就没进去了
-难道是中断标志位没有完全清除？
+03.07
+tmd原来是引脚配错了，串口2的用的引脚是PD不是PA

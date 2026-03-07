@@ -38,4 +38,3 @@ gx_0226\mynvic.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h
 gx_0226\mynvic.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h
 gx_0226\mynvic.o: ../Core/Inc/dma.h
 gx_0226\mynvic.o: ../MyDefinition/Struct_encapsulation.h
-gx_0226\mynvic.o: ../Sensor/IMU.h
