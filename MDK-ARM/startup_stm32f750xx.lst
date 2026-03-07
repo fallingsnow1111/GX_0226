@@ -928,10 +928,8 @@ ARM Macro Assembler    Page 15
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M7.fp.sp --apcs=
 interwork --depend=gx_0226\startup_stm32f750xx.d -ogx_0226\startup_stm32f750xx.
 o -I../Core/Inc -I.\RTE\_GX_0226 -ID:\Keil5_Pack\ARM\CMSIS\6.1.0\CMSIS\Core\Inc
-lude -ID:\Keil5_Pack\Keil\STM32F7xx_DFP\2.15.2\Drivers\CMSIS\Device\ST\STM32F7x
-x\Include --predefine="__UVISION_VERSION SETA 540" --predefine="STM32F750xx SET
-A 1" --predefine="_RTE_ SETA 1" --list=startup_stm32f750xx.lst startup_stm32f75
-0xx.s
+lude --predefine="__UVISION_VERSION SETA 540" --predefine="STM32F750xx SETA 1" 
+--predefine="_RTE_ SETA 1" --list=startup_stm32f750xx.lst startup_stm32f750xx.s
 
 
 

@@ -25,5 +25,7 @@ void Imu_setset_baudrate_115200(void);
 void Imu_setsave_settings(void);
 void Imu_set200hz(void);
 
+void IMU_UART2_RxEvent(uint16_t Size);
+
 #endif
 

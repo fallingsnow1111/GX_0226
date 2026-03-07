@@ -2,8 +2,13 @@
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
-    if (huart->Instance == USART3)
+    if (huart->Instance == USART2)
+    {
+        IMU_UART2_RxEvent(Size);
+    }
+    else if (huart->Instance == USART3)
     {
         My_UART3_IRQHandler();
     }
 }
+

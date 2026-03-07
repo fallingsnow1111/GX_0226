@@ -4,7 +4,9 @@
 
 #include "imu_control.h"
 
-#define RING_BUFFER_SIZE 128
+#define IMU_DMA_BUF_SIZE 128
+#define IMU_FRAME_SIZE 11
+#define IMU_PARSE_BUF_SIZE 256
 
 //配置命令数组
 //解锁寄存器 FF AA 69 88 B5
@@ -21,8 +23,9 @@ uint8_t save_settings[] = {0xFF, 0xAA, 0x00, 0x00, 0x00};
 uint8_t restart_device[] = {0xFF, 0xAA, 0x00, 0xFF, 0x00};
 
 struct  IMU imu;
-static uint8_t imu_buffer[RING_BUFFER_SIZE];
-static uint16_t read_index = 0;
+static uint8_t imu_dma_buf[IMU_DMA_BUF_SIZE];
+static uint8_t imu_parse_buf[IMU_PARSE_BUF_SIZE];
+static uint16_t imu_parse_len = 0;
 uint8_t mpu_flash = 0;  //暂时不知道作用
 
 void  U2_send(uint8_t data)
@@ -49,22 +52,100 @@ void U2_writebuf(uint8_t* buf, uint8_t len)
     }
 }
 
+static void IMU_ParseBytes(const uint8_t* data, uint16_t len)
+{
+    // 读索引
+    uint16_t index = 0;
+
+    if ((data == NULL) || (len == 0))
+    {
+        return;
+    }
+    if (imu_parse_len + len > IMU_PARSE_BUF_SIZE)
+    {
+        // 如果新数据加上现有数据超过解析缓冲区大小，丢弃旧数据
+        imu_parse_len = 0;
+    }
+    // 将新数据追加到解析缓冲区
+    memcpy(&imu_parse_buf[imu_parse_len], data, len);
+    imu_parse_len += len;
+
+    // 解析完整帧
+    while ((imu_parse_len - index) >= IMU_FRAME_SIZE)
+    {
+        if (imu_parse_buf[index] != 0x55)
+        {
+            index++;
+            continue;
+        }
+
+        if (imu_parse_buf[index + 1] != 0x53)
+        {
+            index++;
+            continue;
+        }
+
+        {
+            uint8_t sum = 0;
+            for (int i = 0; i < 10; i++)
+            {
+                sum += imu_parse_buf[index + i];
+            }
+
+            if (sum == imu_parse_buf[index + 10])
+            {
+                uint8_t low = imu_parse_buf[index + 6];
+                uint8_t high = imu_parse_buf[index + 7];
+                int16_t raw_yaw = (int16_t)(((uint16_t)high << 8) | low);
+                float new_yaw = (float)raw_yaw / 32768.0f * 180.0f;
+
+                imu.yaw = 0.9f * new_yaw + 0.1f * imu.yaw;
+                mpu_flash = ~mpu_flash;
+
+                index += IMU_FRAME_SIZE;
+                continue;
+            }
+        }
+
+        index++;
+    }
+
+    // 将未处理的数据移到缓冲区开头
+    if (index > 0)
+    {
+        memmove(imu_parse_buf, &imu_parse_buf[index], imu_parse_len - index);
+        imu_parse_len -= index;
+    }
+}
+
 void IMU_Receive_Init(void)
 {
-    read_index = 0;
-    HAL_UART_DMAStop((&huart2));
+    imu_parse_len = 0;
     __HAL_UART_CLEAR_OREFLAG(&huart2);
     __HAL_UART_CLEAR_IDLEFLAG(&huart2);
 
-    if(HAL_UART_Receive_DMA(&huart2, imu_buffer, RING_BUFFER_SIZE) != HAL_OK)
+    if (HAL_UARTEx_ReceiveToIdle_DMA(&huart2, imu_dma_buf, IMU_DMA_BUF_SIZE) != HAL_OK)
     {
         // 如果这里报错，说明 DMA 句柄或状态不对
         Error_Handler();
     }
+	// 禁止半传输中断，避免在数据还未完全接收时就触发处理函数	
+	__HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);	
+}
 
-    __HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
+void IMU_UART2_RxEvent(uint16_t Size)
+{
+    if (Size > 0 && Size <= IMU_DMA_BUF_SIZE)
+    {
+        IMU_ParseBytes(imu_dma_buf, Size);
+    }
 
-    // __HAL_DMA_ENABLE_IT(&hdma_usart2_rx, DMA_IT_TC);
+    if (HAL_UARTEx_ReceiveToIdle_DMA(&huart2, imu_dma_buf, IMU_DMA_BUF_SIZE) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    __HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT); // 再次禁止半传输中断
 }
 
 void IMU_SetZero(void)
@@ -93,67 +174,84 @@ void Imu_set200hz(void)
     U2_writebuf(set_output_200Hz,5);
 }
 
-uint16_t RingBuffer_GetCount(uint16_t write_idx)
+// 处理 UART 错误，特别是溢出错误，避免卡死
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
-    if (write_idx >= read_index)
-        return write_idx - read_index;
-    else
-        return  RING_BUFFER_SIZE - read_index + write_idx;
-}
-
-//取出后面第offset个数据
-uint8_t RingBuffer_Peek(uint16_t offset)
-{
-    //溢出自动循环
-    return imu_buffer[(read_index + offset) % RING_BUFFER_SIZE];
-}
-
-void USART2_IRQHandler(void)
-{
-    // --- 防卡死 ---
-    if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_ORE))
+    if (huart->Instance == USART2)
     {
         __HAL_UART_CLEAR_OREFLAG(&huart2);
-        // 甚至可以重新启动一下 DMA 以防万一
-        // HAL_UART_Receive_DMA(&huart2, imu_buffer, RING_BUFFER_SIZE);
-    }
-
-    if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE))
-    {
         __HAL_UART_CLEAR_IDLEFLAG(&huart2);
 
-        uint16_t write_idx = RING_BUFFER_SIZE - __HAL_DMA_GET_COUNTER(&hdma_usart2_rx);
-
-        //至少有一帧数据才解包
-        while (RingBuffer_GetCount(write_idx) >= 11)
+        if (HAL_UARTEx_ReceiveToIdle_DMA(&huart2, imu_dma_buf, IMU_DMA_BUF_SIZE) != HAL_OK)
         {
-            if (RingBuffer_Peek(0) == 0x55)
-            {
-                if (RingBuffer_Peek(1) == 0x53)
-                {
-                    uint8_t sum = 0;
-                    for (int i = 0; i < 10; i++)
-                    {
-                        sum += RingBuffer_Peek(i);
-                    }
-                    if (sum == RingBuffer_Peek(10))
-                    {
-                        uint8_t low = RingBuffer_Peek(6);
-                        uint8_t high = RingBuffer_Peek(7);
-                        int16_t raw_yaw = (int16_t)((uint16_t)high<<8 | low);
-                        float new_yaw = (float)raw_yaw / 32768.0f * 180.0f;
-                        imu.yaw = 0.9f * new_yaw + 0.1f * imu.yaw;
-
-                        read_index = (read_index + 11) % RING_BUFFER_SIZE;
-                        continue;
-                    }
-                }
-            }
-            read_index = (read_index + 1) % RING_BUFFER_SIZE;
+            Error_Handler();
         }
+
+        __HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
     }
-    HAL_UART_IRQHandler(&huart2);
 }
+
+// uint16_t RingBuffer_GetCount(uint16_t write_idx)
+// {
+//     if (write_idx >= read_index)
+//         return write_idx - read_index;
+//     else
+//         return  RING_BUFFER_SIZE - read_index + write_idx;
+// }
+
+// //取出后面第offset个数据
+// uint8_t RingBuffer_Peek(uint16_t offset)
+// {
+//     //溢出自动循环
+//     return imu_buffer[(read_index + offset) % RING_BUFFER_SIZE];
+// }
+
+// void USART2_IRQHandler(void)
+// {
+//     // --- 防卡死 ---
+//     if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_ORE))
+//     {
+//         __HAL_UART_CLEAR_OREFLAG(&huart2);
+//         // 甚至可以重新启动一下 DMA 以防万一
+//         // HAL_UART_Receive_DMA(&huart2, imu_buffer, RING_BUFFER_SIZE);
+//     }
+
+//     if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE))
+//     {
+//         __HAL_UART_CLEAR_IDLEFLAG(&huart2);
+
+//         uint16_t write_idx = RING_BUFFER_SIZE - __HAL_DMA_GET_COUNTER(&hdma_usart2_rx);
+
+//         //至少有一帧数据才解包
+//         while (RingBuffer_GetCount(write_idx) >= 11)
+//         {
+//             if (RingBuffer_Peek(0) == 0x55)
+//             {
+//                 if (RingBuffer_Peek(1) == 0x53)
+//                 {
+//                     uint8_t sum = 0;
+//                     for (int i = 0; i < 10; i++)
+//                     {
+//                         sum += RingBuffer_Peek(i);
+//                     }
+//                     if (sum == RingBuffer_Peek(10))
+//                     {
+//                         uint8_t low = RingBuffer_Peek(6);
+//                         uint8_t high = RingBuffer_Peek(7);
+//                         int16_t raw_yaw = (int16_t)((uint16_t)high<<8 | low);
+//                         float new_yaw = (float)raw_yaw / 32768.0f * 180.0f;
+//                         imu.yaw = 0.9f * new_yaw + 0.1f * imu.yaw;
+
+//                         read_index = (read_index + 11) % RING_BUFFER_SIZE;
+//                         continue;
+//                     }
+//                 }
+//             }
+//             read_index = (read_index + 1) % RING_BUFFER_SIZE;
+//         }
+//     }
+//     HAL_UART_IRQHandler(&huart2);
+// }
 
 
 

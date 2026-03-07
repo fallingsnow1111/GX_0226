@@ -19,7 +19,7 @@ void Init_Task(void *pvParameters)
     while (1)
     {
         // Motor_setspeed(0,0,10);
-        vTaskDelay(50);
+        vTaskDelay(200);
     }
 }
 
