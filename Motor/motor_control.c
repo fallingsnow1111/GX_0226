@@ -6,3 +6,11 @@ float my_Abs(float temp)
     else return temp;
 }
 
+void motor_read_coordination_all(void)
+{
+    for (int i = 1; i <= 4; i++)
+    {
+        motor_read_coordination(i);
+        Delay_ms(1);
+    }
+}

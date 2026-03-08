@@ -48,6 +48,9 @@ gx_0226\start_task.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h
 gx_0226\start_task.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h
 gx_0226\start_task.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h
 gx_0226\start_task.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h
+gx_0226\start_task.o: ../Motor/delay.h
+gx_0226\start_task.o: ../Core/Inc/main.h
+gx_0226\start_task.o: ../Core/Inc/tim.h
 gx_0226\start_task.o: ../Motor/imu_control.h
 gx_0226\start_task.o: ../MyDefinition/Struct_encapsulation.h
 gx_0226\start_task.o: ../Motor/pid.h
@@ -55,5 +58,3 @@ gx_0226\start_task.o: ../Sensor/IMU.h
 gx_0226\start_task.o: ../Core/Inc/usart.h
 gx_0226\start_task.o: ../Motor/motor_command.h
 gx_0226\start_task.o: ../Core/Inc/dma.h
-gx_0226\start_task.o: ../Motor/delay.h
-gx_0226\start_task.o: ../Core/Inc/tim.h

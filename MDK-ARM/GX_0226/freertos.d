@@ -42,6 +42,9 @@ gx_0226\freertos.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h
 gx_0226\freertos.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h
 gx_0226\freertos.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h
 gx_0226\freertos.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h
+gx_0226\freertos.o: ../Motor/delay.h
+gx_0226\freertos.o: ../Core/Inc/main.h
+gx_0226\freertos.o: ../Core/Inc/tim.h
 gx_0226\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 gx_0226\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 gx_0226\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
@@ -56,5 +59,3 @@ gx_0226\freertos.o: ../Sensor/IMU.h
 gx_0226\freertos.o: ../Core/Inc/usart.h
 gx_0226\freertos.o: ../Motor/motor_command.h
 gx_0226\freertos.o: ../Core/Inc/dma.h
-gx_0226\freertos.o: ../Motor/delay.h
-gx_0226\freertos.o: ../Core/Inc/tim.h

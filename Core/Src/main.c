@@ -47,7 +47,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+extern volatile uint16_t delay_time;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -189,6 +189,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM14) {
     HAL_IncTick();
+  }
+  if (htim->Instance == TIM6) {
+    ++delay_time;
   }
   /* USER CODE BEGIN Callback 1 */
 

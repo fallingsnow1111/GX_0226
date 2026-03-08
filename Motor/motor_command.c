@@ -27,7 +27,8 @@ static char RX_piont=0;
 
 void uart3WriteBuf(uint8_t *buf, uint8_t len)
 {
-    HAL_UART_Transmit_DMA(&huart3,buf,len);
+    // 阻塞发送，等待发送完成
+    HAL_UART_Transmit(&huart3, buf, len, 20);
 }
 
 void Motor_Init(void)
@@ -203,6 +204,15 @@ void Motor_Action_Calculate_target(float vx, float vy, float vw) {
     __enable_irq();
 }
 
+// 位置解算，计算实际位置
+void Motor_Action_Calculate_actual(volatile float *actual_x, volatile float *actual_y, volatile float *actual_w) {
+    __disable_irq();
+    *actual_x = (motor1.actual_angle - motor2.actual_angle - motor3.actual_angle + motor4.actual_angle) / 4.0f;
+    *actual_y = (motor1.actual_angle + motor2.actual_angle - motor3.actual_angle - motor4.actual_angle) / 4.0f;
+    *actual_w = (motor1.actual_angle + motor2.actual_angle + motor3.actual_angle + motor4	actual_angle) / 4.0f;
+    __enable_irq();
+}
+
 //延时分别发送速度指令
 void Motor_setspeed(float vx, float vy, float vw)
 {
@@ -211,8 +221,22 @@ void Motor_setspeed(float vx, float vy, float vw)
     Send_speed_switch();
 }
 
-static uint8_t rx_buff1[RXdat_maxsize];
-static uint8_t rx_buff2[RXdat_maxsize];
+// 将当前位置角度清零
+void Motor_SetZero(void)
+{
+    uint8_t TXdata[4];
+    TXdata[1] = 0x0A;
+    TXdata[2] = 0x6D;
+    TXdata[3] = 0x6B;
+    for (uint16_t i = 0x01; i <= 4; i++)
+    {
+        TXdata[0] = i;
+        uart3WriteBuf((uint8_t*)TXdata, 4);
+        Delay_ms(10);
+    }
+}
+
+static uint8_t rx_buff[RXdat_maxsize];
 
 void USART3_Process_data(uint8_t* data, uint8_t len) {
     if (data[len-1] != 0x6B) {
@@ -256,7 +280,7 @@ void USART3_Process_data(uint8_t* data, uint8_t len) {
                 motor4.actual_angle = (data[3] << 24) | (data[4] << 16) | (data[5] << 8) | data[6] ;
                 motor4.actual_angle = motor4.actual_angle*360/65535;
                 if (data[2] == 0x01) {
-                    motor4.actual_angle = -motor1.actual_angle;
+                    motor4.actual_angle = -motor4.actual_angle;
                 }
                 motor_check.flag_finish = motor_check.flag_finish | (1<<3);
                 break;
@@ -267,7 +291,7 @@ void USART3_Process_data(uint8_t* data, uint8_t len) {
     else if (len == 4)
     {
         if (data[0] == 0x01 && data[3] == 0x6B) {
-            if (data[2] == 0xF6 && data[3] == 0x02)
+            if (data[1] == 0xF6 && data[2] == 0x02)
             {
                 motor_check.flag_ready = finish;
             }
@@ -275,51 +299,12 @@ void USART3_Process_data(uint8_t* data, uint8_t len) {
     }
 }
 
-// 接收完成标志检查，放在自定义中断处理函数中
-void Motor_FinishFlag_Exam(uint8_t *RX_data) {
-    uint8_t buff_len = 0;
-    uint8_t* rxbuff = NULL;
-    uint8_t rxbuff_flag = 0;
-
-    // stop DMA to process received data
-    if (HAL_UART_DMAStop(&huart3) != HAL_OK) {
-        // error handling
-        return;
-    }
-
-    // disable IRQ to ensure data consistency
-    __disable_irq();
-
-    // correctly get DMA reception counter
-    if (huart3.hdmarx != NULL) {
-        buff_len = RXdat_maxsize - __HAL_DMA_GET_COUNTER(huart3.hdmarx);
-    }
-
-    // copy received data to buffer
-    if (buff_len > 0 && RX_data != NULL) {
-        //双缓冲区切换
-        if (rxbuff_flag == 0) {
-            rxbuff = rx_buff1;
-            rxbuff_flag = ~rxbuff_flag;
-        }
-        else {
-            rxbuff = rx_buff2;
-            rxbuff_flag = ~rxbuff_flag;
-        }
-        //复制数据到缓冲区
-        memcpy(rxbuff, RX_data, buff_len);
-        __enable_irq();
-        USART3_Process_data(rxbuff,buff_len);
-    }
-    else {
-        // 恢复中断（如果没有数据或指针无效）
-        __enable_irq();
-    }
-}
-
-void My_UART3_IRQHandler(void)
+void My_UART3_IRQHandler(uint16_t Size)
 {
-    Motor_FinishFlag_Exam(RX_data);
+    if(Size > 0 && Size <= RXdat_maxsize) {
+        memcpy(rxbuff, RX_data, Size); // 将接收到的数据复制到RX_data缓冲区
+        USART3_Process_data(rxbuff, (uint8_t)Size); // 处理接收到的数据
+    }
     //处理完数据重新启动DMA接收
     HAL_UARTEx_ReceiveToIdle_DMA(&huart3, RX_data, RXdat_maxsize);
 }

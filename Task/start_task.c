@@ -12,15 +12,15 @@ void Init_Task(void *pvParameters)
 {
     Delay_Init();
     Gyro_Init();
-    // Motor_Init();
+    Motor_Init();
+    chassis_control_init();
 
-    // IMU_Task_Create(); // 创建 IMU 任务
+    motor_check.flag_finish = 0; //初始化电机反馈完成标志
+    motor_read_coordination_all(); //读取初始电机位置
 
-    while (1)
-    {
-        // Motor_setspeed(0,0,10);
-        vTaskDelay(200);
-    }
+    Chassis_Control_Task_Create();
+    
+    vTaskDelete(NULL);
 }
 
 void Init_Task_Create(void)

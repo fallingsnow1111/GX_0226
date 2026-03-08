@@ -777,7 +777,7 @@
 
   <Group>
     <GroupName>MyNVIC</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1004,8 +1004,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Task\imu_task.c</PathWithFileName>
-      <FilenameWithoutPath>imu_task.c</FilenameWithoutPath>
+      <PathWithFileName>..\Task\start_task.c</PathWithFileName>
+      <FilenameWithoutPath>start_task.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1016,8 +1016,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Task\imu_task.h</PathWithFileName>
-      <FilenameWithoutPath>imu_task.h</FilenameWithoutPath>
+      <PathWithFileName>..\Task\start_task.h</PathWithFileName>
+      <FilenameWithoutPath>start_task.h</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1028,8 +1028,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Task\start_task.c</PathWithFileName>
-      <FilenameWithoutPath>start_task.c</FilenameWithoutPath>
+      <PathWithFileName>..\Task\main_task.c</PathWithFileName>
+      <FilenameWithoutPath>main_task.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1040,8 +1040,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Task\start_task.h</PathWithFileName>
-      <FilenameWithoutPath>start_task.h</FilenameWithoutPath>
+      <PathWithFileName>..\Task\main_task.h</PathWithFileName>
+      <FilenameWithoutPath>main_task.h</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

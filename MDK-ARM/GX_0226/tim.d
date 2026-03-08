@@ -34,3 +34,6 @@ gx_0226\tim.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h
 gx_0226\tim.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h
 gx_0226\tim.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h
 gx_0226\tim.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h
+gx_0226\tim.o: ../Motor/delay.h
+gx_0226\tim.o: ../Core/Inc/main.h
+gx_0226\tim.o: ../Core/Inc/tim.h

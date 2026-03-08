@@ -1748,16 +1748,6 @@
               <FilePath>..\Task\chassis_control_task.h</FilePath>
             </File>
             <File>
-              <FileName>imu_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Task\imu_task.c</FilePath>
-            </File>
-            <File>
-              <FileName>imu_task.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Task\imu_task.h</FilePath>
-            </File>
-            <File>
               <FileName>start_task.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Task\start_task.c</FilePath>
@@ -1766,6 +1756,16 @@
               <FileName>start_task.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Task\start_task.h</FilePath>
+            </File>
+            <File>
+              <FileName>main_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Task\main_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>main_task.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Task\main_task.h</FilePath>
             </File>
           </Files>
         </Group>

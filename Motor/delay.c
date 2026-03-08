@@ -1,6 +1,6 @@
 #include "delay.h"
 
-uint16_t delay_time = 0;
+volatile uint16_t delay_time = 0;
 
 void Delay_Init(void)
 {
@@ -12,7 +12,6 @@ void Delay_Init(void)
 void Delay_ms(uint16_t ms)
 {
     delay_time = 0;
-    if (delay_time <= ms) {};
+    while (delay_time < ms) {};
 }
-
 

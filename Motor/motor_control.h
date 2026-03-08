@@ -2,9 +2,8 @@
 #define __MOTOR_CONTROL_H
 
 
-
-
 float my_Abs(float temp);
+void motor_read_coordination_all(void);
 
 
 

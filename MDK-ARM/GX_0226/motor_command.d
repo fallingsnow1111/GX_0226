@@ -35,8 +35,9 @@ gx_0226\motor_command.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h
 gx_0226\motor_command.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h
 gx_0226\motor_command.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h
 gx_0226\motor_command.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h
+gx_0226\motor_command.o: ../Motor/delay.h
+gx_0226\motor_command.o: ../Core/Inc/main.h
+gx_0226\motor_command.o: ../Core/Inc/tim.h
 gx_0226\motor_command.o: ../Core/Inc/dma.h
 gx_0226\motor_command.o: ../MyDefinition/Struct_encapsulation.h
 gx_0226\motor_command.o: D:\Keil5_MDK\ARM\ARMCC\Bin\..\include\string.h
-gx_0226\motor_command.o: ..\Motor\delay.h
-gx_0226\motor_command.o: ../Core/Inc/tim.h
