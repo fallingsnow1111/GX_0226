@@ -31,8 +31,8 @@ typedef struct CARDATA_T {
 }CARDATA_T;
 
 typedef struct CHECK_FLAG_t {
-    uint8_t flag_ready;     //任务是否就绪的标识位
-    uint8_t flag_finish;    //任务是否完成的标志位
+    uint8_t flag_ready;     //速度控制模式就绪标志
+    uint8_t flag_finish;    //电机反馈完成标志，每个电机对应一个bit，4个电机共4bit
 };
 
 typedef struct PID_struct

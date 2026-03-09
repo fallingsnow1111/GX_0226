@@ -4,6 +4,13 @@
 
 #include "delay.h"
 
+// 电机相关命令帧定义
+#define MOTOR_FRAME_POS_LEN         8
+#define MOTOR_FRAME_ACK_LEN         4
+#define MOTOR_CMD_READ_POS          0x36
+#define MOTOR_CMD_SPEED_CTRL        0xF6
+#define MOTOR_FRAME_END             0x6B
+
 //step angle division 1.8/16=0.11255 degree
 // #define Angle_division 16
 #define magic_number 14  // some magic number for position conversion
@@ -21,9 +28,77 @@ static uint8_t LF_send[15];
 static uint8_t RB_send[15];
 static uint8_t RF_send[15];
 
+static uint8_t rx_cache[RXdat_maxsize * 2];
+static uint16_t rx_cache_len = 0;
+
+static uint8_t Motor_IsValidID(uint8_t id) {
+    return (id >= 1 && id <= 4);
+}
+
+// 消耗指定数量的字节，从接收缓存中移除已处理的数据
+static void Motor_ConsumeBytes(uint16_t count)
+{
+    if (count >= rx_cache_len) {
+        rx_cache_len = 0; // Clear cache if all bytes are consumed
+        return;
+    } 
+
+    memmove(rx_cache, rx_cache + count, rx_cache_len - count);
+    rx_cache_len -= count;
+}
+
+// 解析接收到的数据帧，提取电机位置信息
+static void Motor_ParsePositionFrame(const uint8_t* frame)
+{
+    float angle;
+
+    angle = (float)(((uint32_t)frame[3] << 24) | 
+                    ((uint32_t)frame[4] << 16) | 
+                    ((uint32_t)frame[5] << 8)  | 
+                    ((uint32_t)frame[6]));
+
+    angle = angle * 360.0f / 65535.0f; // Convert to degrees
+
+    if (frame[2] == 0x01) {
+        angle = -angle; // Negative direction
+    }
+
+    switch (frame[0]) {
+        case 0x01:
+            motor1.actual_angle = angle;
+            motor_check.flag_finish |= (1 << 0); // Set bit 0
+            break;
+        case 0x02:
+            motor2.actual_angle = angle;
+            motor_check.flag_finish |= (1 << 1); // Set bit 1
+            break;
+        case 0x03:
+            motor3.actual_angle = angle;
+            motor_check.flag_finish |= (1 << 2); // Set bit 2
+            break;
+        case 0x04:
+            motor4.actual_angle = angle;
+            motor_check.flag_finish |= (1 << 3); // Set bit 3
+            break;
+        default:
+            break; // Invalid ID, ignore
+    }
+}
+
+// 解析速度控制命令的ACK帧，设置就绪标志
+static void Motor_ParseAckFrame(const uint8_t* frame)
+{
+    if(Motor_IsValidID(frame[0])        &&
+       frame[1] == MOTOR_CMD_SPEED_CTRL &&
+       frame[2] == 0x02                 &&
+       frame[3] == MOTOR_FRAME_END)
+    {
+        motor_check.flag_ready = finish; // Set ready flag
+    }
+}
+
 // Reception buffer
 static uint8_t RX_data[RXdat_maxsize]={0};
-static char RX_piont=0;
 
 void uart3WriteBuf(uint8_t *buf, uint8_t len)
 {
@@ -236,74 +311,80 @@ void Motor_SetZero(void)
     }
 }
 
-static uint8_t rx_buff[RXdat_maxsize];
+void USART3_Process_data(uint8_t* data, uint8_t len)
+{
+    uint8_t expected_len = 0;
 
-void USART3_Process_data(uint8_t* data, uint8_t len) {
-    if (data[len-1] != 0x6B) {
+    if(len == 0)
+    {
         return;
     }
-    if (len == 8) {
-        switch (data[0])
-        {
-            case 0x01://
-            {
-                motor1.actual_angle = (data[3] << 24) | (data[4] << 16) | (data[5] << 8) | data[6] ;
-                motor1.actual_angle = motor1.actual_angle*360/65535;
-                if (data[2] == 0x01) {
-                    motor1.actual_angle = -motor1.actual_angle;
-                }
-                motor_check.flag_finish = motor_check.flag_finish | (1<<0);
-                break;
-            }
-            case 0x02:
-            {
-                motor2.actual_angle = (data[3] << 24) | (data[4] << 16) | (data[5] << 8) | data[6] ;
-                motor2.actual_angle = motor2.actual_angle*360/65535;
-                if (data[2] == 0x01) {
-                    motor2.actual_angle = -motor2.actual_angle;
-                }
-                motor_check.flag_finish = motor_check.flag_finish | (1<<1);
-                break;
-            }
-            case 0x03:
-            {
-                motor3.actual_angle = (data[3] << 24) | (data[4] << 16) | (data[5] << 8) | data[6] ;
-                motor3.actual_angle = motor3.actual_angle*360/65535;
-                if (data[2] == 0x01) {
-                    motor3.actual_angle = -motor3.actual_angle;
-                }
-                motor_check.flag_finish = motor_check.flag_finish | (1<<2);
-                break;
-            }
-            case 0x04:
-            {
-                motor4.actual_angle = (data[3] << 24) | (data[4] << 16) | (data[5] << 8) | data[6] ;
-                motor4.actual_angle = motor4.actual_angle*360/65535;
-                if (data[2] == 0x01) {
-                    motor4.actual_angle = -motor4.actual_angle;
-                }
-                motor_check.flag_finish = motor_check.flag_finish | (1<<3);
-                break;
-            }
-        }
-    }
-    //速度控制模式就绪标志
-    else if (len == 4)
+
+    if((uint16_t)(rx_cache_len + len) > sizeof(rx_cache))
     {
-        if (data[0] == 0x01 && data[3] == 0x6B) {
-            if (data[1] == 0xF6 && data[2] == 0x02)
-            {
-                motor_check.flag_ready = finish;
-            }
+        // 如果新数据超过缓存大小，丢弃旧数据
+        rx_cache_len = 0;
+    }
+
+    memcpy(rx_cache + rx_cache_len, data, len);
+    rx_cache_len += len;
+
+    while(rx_cache_len > 0)
+    {
+        if(!Motor_IsValidID(rx_cache[0]))
+        {
+            // 无效ID，丢弃第一个字节
+            Motor_ConsumeBytes(1);
+            continue;
         }
+        if(rx_cache_len < 2)
+        {
+            break; // 等待更多数据
+        }
+        if(rx_cache[1] == MOTOR_CMD_READ_POS)
+        {
+            expected_len = MOTOR_FRAME_POS_LEN;
+        }
+        else if(rx_cache[1] == MOTOR_CMD_SPEED_CTRL)
+        {
+            expected_len = MOTOR_FRAME_ACK_LEN;
+        }
+        else
+        {
+            // 无效命令，丢弃第一个字节
+            Motor_ConsumeBytes(1);
+            continue;
+        }
+
+        if(rx_cache_len < expected_len)
+        {
+            break; // 等待更多数据
+        }
+            
+        if(rx_cache[expected_len - 1] != MOTOR_FRAME_END)
+        {
+            // 无效帧，丢弃第一个字节
+            Motor_ConsumeBytes(1);
+            continue;
+        }
+
+        if(expected_len == MOTOR_FRAME_POS_LEN)
+        {
+            Motor_ParsePositionFrame(rx_cache);
+        }
+        else
+        {
+            Motor_ParseAckFrame(rx_cache);
+        }
+
+        Motor_ConsumeBytes(expected_len); // 移除已处理的帧
     }
 }
 
 void My_UART3_IRQHandler(uint16_t Size)
 {
     if(Size > 0 && Size <= RXdat_maxsize) {
-        memcpy(rxbuff, RX_data, Size); // 将接收到的数据复制到RX_data缓冲区
-        USART3_Process_data(rxbuff, (uint8_t)Size); // 处理接收到的数据
+        USART3_Process_data(RX_data, (uint8_t)Size);
     }
     //处理完数据重新启动DMA接收
     HAL_UARTEx_ReceiveToIdle_DMA(&huart3, RX_data, RXdat_maxsize);

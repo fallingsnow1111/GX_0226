@@ -11,6 +11,11 @@
 TaskHandle_t Chassis_Control_Task_Handle;
 
 extern volatile struct CHECK_FLAG_t motor_check;
+volatile uint8_t MOTOR_ACTION_FINISH_FLAG = Incomplete;//电机动作完成标志
+
+static float segment_zero_x = 0.0f; //分段归零的X坐标
+static float segment_zero_y = 0.0f; //分段归零的Y坐标
+static float segment_zero_w = 0.0f; //分段归零的角度
 
 volatile CARDATA_T car;
 static struct PID_struct chassis_pid_x;
@@ -56,6 +61,36 @@ void Get_Chassis_c_output(float *x_output, float *y_output, float *w_output)
     *w_output = w_c_output;
 }
 
+// 里程计归零函数
+void Odometer_SetZero(void)
+{
+    car.actual_x = 0.0f;
+    car.actual_y = 0.0f;
+    car.actual_w = 0.0f;
+}
+
+// 分段归零函数，适用于需要在运动过程中重新设定参考点的情况
+void Chassis_SetRelativeZero(void)
+{
+    segment_zero_x = car.actual_x;
+    segment_zero_y = car.actual_y;
+    segment_zero_w = car.actual_w;
+}
+
+// 启动相对运动，输入相对于当前分段零点的目标位置和姿态
+void Chassis_SetRelativeTarget(float dx, float dy, float dw)
+{
+    segment_zero_x = car.actual_x;
+    segment_zero_y = car.actual_y;
+    segment_zero_w = car.actual_w;
+
+    car.target_x = dx;
+    car.target_y = dy;
+    car.target_w = dw;
+
+    MOTOR_ACTION_FINISH_FLAG = Incomplete; //设置动作未完成标志
+}
+
 void chassis_control_init(void)
 {
     PID_init(&chassis_pid_y, 0.28f, 0.0f, 0.0f, 350.0f, -350.0f);
@@ -69,23 +104,25 @@ void chassis_control_init(void)
     car.actual_y = 0.0f;
     car.actual_w = 0.0f;
 
+    segment_zero_x = 0.0f;
+    segment_zero_y = 0.0f;
+    segment_zero_w = 0.0f;
+
     car.IMU_modeable = unable;
     car.ODOM_modeable = enable;
 }
 
-// 里程计归零函数
-void Odometer_SetZero(void)
-{
-    car.actual_x = 0.0f;
-    car.actual_y = 0.0f;
-    car.actual_w = 0.0f;
-}
 
 void chassis_control(void)
 {
     float err_x;
     float err_y;
     float err_w;
+    float rel_actual_x;
+    float rel_actual_y;
+    float rel_actual_w;
+    float global_target_w;
+
     static uint8_t lost_feedback_count = 0;//丢失反馈计数器
     uint8_t feedback_ready = motor_check.flag_finish;
 
@@ -100,15 +137,23 @@ void chassis_control(void)
             car.actual_w = normalizeAngle(imu.yaw);
         }
 
+        //计算相对于分段零点的实际位置和姿态
+        rel_actual_x = car.actual_x - segment_zero_x;
+        rel_actual_y = car.actual_y - segment_zero_y;
+        rel_actual_w = angle_error_deg(car.actual_w, segment_zero_w);
+
         //计算位置和姿态误差
-        err_x = car.target_x - car.actual_x;
-        err_y = car.target_y - car.actual_y;
-        err_w = angle_error_deg(car.target_w, car.actual_w);
+        err_x = car.target_x - rel_actual_x;
+        err_y = car.target_y - rel_actual_y;
+        err_w = angle_error_deg(car.target_w, rel_actual_w);
 
         //计算PID输出
-        x_c_output = PID_Compute(&chassis_pid_x, car.target_x, car.actual_x);
-        y_c_output = PID_Compute(&chassis_pid_y, car.target_y, car.actual_y);   
-        w_c_output = Direction_Calibration_turn(car.target_w);
+        x_c_output = PID_Compute(&chassis_pid_x, car.target_x, rel_actual_x);
+        y_c_output = PID_Compute(&chassis_pid_y, car.target_y, rel_actual_y);
+        
+        //全局目标角度计算，考虑分段归零的影响
+        global_target_w = segment_zero_w + car.target_w; //全局目标角度
+        w_c_output = Direction_Calibration_turn(global_target_w);
 
         //应用死区处理，防止小误差导致电机抖动
         y_c_output = apply_deadzone(y_c_output, err_y, POSITION_THRESHOLD, MIN_TRANSLATION_OUTPUT);
@@ -126,7 +171,6 @@ void chassis_control(void)
 
             if(MOTOR_ACTION_FINISH_FLAG == Incomplete) {
                 MOTOR_ACTION_FINISH_FLAG = finish; //设置动作完成标志
-                Motor_SetZero(); //动作完成后将电机位置归零
             }
         }
         else
@@ -137,7 +181,10 @@ void chassis_control(void)
     }
     else
     {
-        MOTOR_ACTION_FINISH_FLAG = Incomplete; //动作未完成
+        if(MOTOR_ACTION_FINISH_FLAG != finish) 
+        {
+            MOTOR_ACTION_FINISH_FLAG = Incomplete; //如果之前未完成，继续保持未完成状态
+        }
 
         if(++lost_feedback_count >= 5) {
             //如果连续多次丢失反馈，停止电机以防止失控
@@ -152,7 +199,7 @@ void chassis_control(void)
 void Chassis_Control_Task(void *pvParameters)
 {
     TickType_t xLastWakeTime = xTaskGetTickCount();
-    const TickType_t xFrequency = pdMS_TO_TICKS(10); // 10ms周期
+    const TickType_t xFrequency = pdMS_TO_TICKS(25); // 25ms周期
 
     while (1)
     {

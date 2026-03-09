@@ -8,6 +8,8 @@
 #include "imu_control.h"
 
 void Chassis_Control_Task_Create(void);
+void Chassis_SetRelativeZero(void);
+void Chassis_SetRelativeTarget(float dx, float dy, float dw);
 
 
 

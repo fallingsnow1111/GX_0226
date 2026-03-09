@@ -30,6 +30,7 @@ float getAngleZ(float yaw, float my_angle)
             temp -= 360;
         }
     }
+    return temp;
 }
 
 float getAngleZ_avg(float my_angle)
@@ -42,23 +43,32 @@ float getAngleZ_avg(float my_angle)
 //角度修偏函数，解决角度在正负180度之间的跳变
 float normalizeAngle(float angle)
 {
-    static uint8_t flag = 0;
-    if (angle - imu_run.LAST_ANGLE > 180.0f)
+    static int16_t turn_count = 0;
+    float delta;
+
+    if(imu_run.IS_MOVING == 0)
     {
-        flag--;
-    }
-    else if (angle - imu_run.LAST_ANGLE < -180.0f)
-    {
-        flag++;
-    }
-    //静止时重置圈数
-    if (imu_run.IS_MOVING == 0)
-    {
-        flag = 0;
+        turn_count = 0; //静止时重置转圈计数
         imu_run.IS_MOVING = 1;
+        imu_run.LAST_ANGLE = angle;
+        return angle;
     }
 
-    return angle + 360.0f * flag;
+    delta = angle - imu_run.LAST_ANGLE;
+    if (fabsf(delta) > 180.0f)
+    {
+        if (delta > 0)
+        {
+            turn_count--;
+        }
+        else
+        {
+            turn_count++;
+        }
+    }
+
+    imu_run.LAST_ANGLE = angle;
+    return angle + 360.0f * turn_count;
 }
 
 //反向控制的原因是？
