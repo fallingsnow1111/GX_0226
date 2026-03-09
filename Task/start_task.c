@@ -11,7 +11,7 @@ TaskHandle_t Init_Task_Handle;
 void Init_Task(void *pvParameters)
 {
     Delay_Init();
-    Gyro_Init();
+//    Gyro_Init();
     Motor_Init();
     chassis_control_init();
 
@@ -19,6 +19,7 @@ void Init_Task(void *pvParameters)
     motor_read_coordination_all(); //读取初始电机位置
 
     Chassis_Control_Task_Create();
+    Main_Task_Create();
     
     vTaskDelete(NULL);
 }

@@ -36,6 +36,15 @@ gx_0226\main.o: ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h
 gx_0226\main.o: ../Motor/delay.h
 gx_0226\main.o: ../Core/Inc/main.h
 gx_0226\main.o: ../Core/Inc/tim.h
+gx_0226\main.o: ../Motor/imu_control.h
+gx_0226\main.o: ../MyDefinition/Struct_encapsulation.h
+gx_0226\main.o: ../Motor/pid.h
+gx_0226\main.o: ../Sensor/IMU.h
+gx_0226\main.o: ../Core/Inc/usart.h
+gx_0226\main.o: ../Motor/motor_command.h
+gx_0226\main.o: ../Core/Inc/dma.h
+gx_0226\main.o: ../Motor/motor_control.h
+gx_0226\main.o: ../Task/chassis_control_task.h
 gx_0226\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 gx_0226\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 gx_0226\main.o: ../Core/Inc/FreeRTOSConfig.h
@@ -50,6 +59,7 @@ gx_0226\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 gx_0226\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 gx_0226\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 gx_0226\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
-gx_0226\main.o: ../Core/Inc/dma.h
-gx_0226\main.o: ../Core/Inc/usart.h
+gx_0226\main.o: D:\Keil5_MDK\ARM\ARMCC\Bin\..\include\math.h
+gx_0226\main.o: ../Task/main_task.h
+gx_0226\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 gx_0226\main.o: ../Core/Inc/gpio.h

@@ -22,32 +22,25 @@ Dialog DLL:      TCM.DLL V1.56.4.0
  
 <h2>Project:</h2>
 C:\Users\LuoXue\Desktop\Robot Project\GX_0226\MDK-ARM\GX_0226.uvprojx
-Project File Date:  03/08/2026
+Project File Date:  03/09/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'D:\Keil5_MDK\ARM\ARMCC\Bin'
 Build target 'GX_0226'
-compiling delay.c...
-compiling chassis_control_task.c...
+compiling start_task.c...
 ../MyDefinition/Struct_encapsulation.h(36): warning:  #375-D: declaration requires a typedef name
   };
 ../MyDefinition/Struct_encapsulation.h(48): warning:  #375-D: declaration requires a typedef name
   };
-..\Task\chassis_control_task.c(84): warning:  #177-D: variable "err_x"  was declared but never referenced
-      float err_x;
-..\Task\chassis_control_task.c(85): warning:  #177-D: variable "err_y"  was declared but never referenced
-      float err_y;
-..\Task\chassis_control_task.c(86): warning:  #177-D: variable "err_w"  was declared but never referenced
-      float err_w;
-..\Task\chassis_control_task.c(22): warning:  #177-D: function "angle_error_deg"  was declared but never referenced
-  static float angle_error_deg(float target_angle, float actual_angle) {
-..\Task\chassis_control_task.c(33): warning:  #177-D: function "apply_deadzone"  was declared but never referenced
-  static float apply_deadzone(float output,
-..\Task\chassis_control_task.c: 7 warnings, 0 errors
+../Sensor/IMU.h(19): warning:  #375-D: declaration requires a typedef name
+  };
+../Motor/imu_control.h(14): warning:  #375-D: declaration requires a typedef name
+  };
+..\Task\start_task.c: 4 warnings, 0 errors
 linking...
-Program Size: Code=15664 RO-data=560 RW-data=224 ZI-data=19088  
+Program Size: Code=20716 RO-data=560 RW-data=284 ZI-data=20676  
 FromELF: creating hex file...
-"GX_0226\GX_0226.axf" - 0 Error(s), 7 Warning(s).
+"GX_0226\GX_0226.axf" - 0 Error(s), 4 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -70,7 +63,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE@6.1.0
       Include file:  CMSIS/Core/Include/tz_context.h
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>
