@@ -32,13 +32,6 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "delay.h"
-#include "imu_control.h"
-#include "motor_command.h"
-#include "motor_control.h"
-#include "Struct_encapsulation.h"
-#include "imu_control.h"
-#include "chassis_control_task.h"
-#include "main_task.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

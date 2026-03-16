@@ -7,8 +7,6 @@
 
 #define RXdat_maxsize 128
 
-extern volatile struct CHECK_FLAG_t motor_check;
-
 // extern DMA_HandleTypeDef hdma_usart3_rx;
 
 struct MOTOR_DATA {

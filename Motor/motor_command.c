@@ -119,7 +119,7 @@ void Motor_Init(void)
     motor3.actual_angle = 0;
     motor4.target_angle = 0;
     motor4.actual_angle = 0;
-    // __HAL_UART_ENABLE_IT(&huart3, UART_IT_RXNE); // Enable USART3 interrupt
+    __HAL_UART_ENABLE_IT(&huart3, UART_IT_RXNE); // Enable USART3 interrupt
     //开启dma接收，检测到空闲则产生中断并停止
     HAL_UARTEx_ReceiveToIdle_DMA(&huart3, RX_data, RXdat_maxsize); // Start DMA reception
 }
@@ -284,7 +284,7 @@ void Motor_Action_Calculate_actual(volatile float *actual_x, volatile float *act
     __disable_irq();
     *actual_x = (motor1.actual_angle - motor2.actual_angle - motor3.actual_angle + motor4.actual_angle) / 4.0f;
     *actual_y = (motor1.actual_angle + motor2.actual_angle - motor3.actual_angle - motor4.actual_angle) / 4.0f;
-    *actual_w = (motor1.actual_angle + motor2.actual_angle + motor3.actual_angle + motor4.actual_angle) / 4.0f;
+    *actual_w = (motor1.actual_angle + motor2.actual_angle + motor3.actual_angle + motor4	actual_angle) / 4.0f;
     __enable_irq();
 }
 
@@ -360,7 +360,7 @@ void USART3_Process_data(uint8_t* data, uint8_t len)
         {
             break; // 等待更多数据
         }
-
+            
         if(rx_cache[expected_len - 1] != MOTOR_FRAME_END)
         {
             // 无效帧，丢弃第一个字节

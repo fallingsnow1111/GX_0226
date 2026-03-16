@@ -29,13 +29,6 @@
 
 #include "stm32f7xx_hal.h"写在main.h里,各个外设的.h文件，若报找不到类型定义的错，请把main.h包含进来。
 配置TIM14为systick的时钟源时，会在mian.c自动生成HAL_TIM_PeriodElapsedCallback
-TaskHandle_t定义在task.h中，而cmsis_os.h包含Freertos.h和task.h，找不到定义时包含cmsis_os.h即可 
-
-把编写的驱动头文件都包含在main.h中，需要用到时引用main.h即可
 
 03.07
-串口2的用的引脚是PD不是PA
-
-03.09
-有时候会进__HAL_UART_GET_FLAG(&huart2, UART_FLAG_ORE)，溢出错误
-串口3接收有可能因错误而被终止
+tmd原来是引脚配错了，串口2的用的引脚是PD不是PA

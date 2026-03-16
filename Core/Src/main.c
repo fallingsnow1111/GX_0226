@@ -190,10 +190,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim->Instance == TIM14) {
     HAL_IncTick();
   }
-  /* USER CODE BEGIN Callback 1 */
-  if(htim->Instance == TIM6) {
-    ++delay_time; //增加全局延时计数
+  if (htim->Instance == TIM6) {
+    ++delay_time;
   }
+  /* USER CODE BEGIN Callback 1 */
+
   /* USER CODE END Callback 1 */
 }
 

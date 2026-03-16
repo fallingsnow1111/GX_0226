@@ -4,6 +4,9 @@
 #include "cmsis_os.h"
 #include "main.h"
 
+#include "imu_control.h"
+#include "delay.h"
+
 void Start_Task_Create(void);
 
 #endif
