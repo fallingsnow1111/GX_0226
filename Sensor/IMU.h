@@ -19,6 +19,7 @@ typedef struct IMU
 };
 
 void IMU_Receive_Init(void);
+void IMU_Process(void);
 void IMU_SetZero(void);
 void Imu_unlock_register(void);
 void Imu_setset_baudrate_115200(void);

@@ -62,5 +62,6 @@ gx_0226\motor_command.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semp
 gx_0226\motor_command.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 gx_0226\motor_command.o: D:\Keil5_MDK\ARM\ARMCC\Bin\..\include\math.h
 gx_0226\motor_command.o: ../Task/main_task.h
+gx_0226\motor_command.o: ../Task/imu_task.h
 gx_0226\motor_command.o: ../Core/Inc/dma.h
 gx_0226\motor_command.o: D:\Keil5_MDK\ARM\ARMCC\Bin\..\include\string.h

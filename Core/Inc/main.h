@@ -39,6 +39,7 @@ extern "C" {
 #include "imu_control.h"
 #include "chassis_control_task.h"
 #include "main_task.h"
+#include "imu_task.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

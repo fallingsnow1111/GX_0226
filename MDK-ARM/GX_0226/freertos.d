@@ -61,6 +61,7 @@ gx_0226\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 gx_0226\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 gx_0226\freertos.o: D:\Keil5_MDK\ARM\ARMCC\Bin\..\include\math.h
 gx_0226\freertos.o: ../Task/main_task.h
+gx_0226\freertos.o: ../Task/imu_task.h
 gx_0226\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 gx_0226\freertos.o: ../Task/start_task.h
 gx_0226\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h

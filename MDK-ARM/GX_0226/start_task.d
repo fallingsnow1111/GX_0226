@@ -63,3 +63,4 @@ gx_0226\start_task.o: ../Task/chassis_control_task.h
 gx_0226\start_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 gx_0226\start_task.o: D:\Keil5_MDK\ARM\ARMCC\Bin\..\include\math.h
 gx_0226\start_task.o: ../Task/main_task.h
+gx_0226\start_task.o: ../Task/imu_task.h

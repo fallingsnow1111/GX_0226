@@ -61,4 +61,5 @@ gx_0226\stm32f7xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semph
 gx_0226\stm32f7xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 gx_0226\stm32f7xx_it.o: D:\Keil5_MDK\ARM\ARMCC\Bin\..\include\math.h
 gx_0226\stm32f7xx_it.o: ../Task/main_task.h
+gx_0226\stm32f7xx_it.o: ../Task/imu_task.h
 gx_0226\stm32f7xx_it.o: ../Core/Inc/stm32f7xx_it.h

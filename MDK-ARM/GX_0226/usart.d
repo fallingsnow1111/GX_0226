@@ -62,3 +62,4 @@ gx_0226\usart.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 gx_0226\usart.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 gx_0226\usart.o: D:\Keil5_MDK\ARM\ARMCC\Bin\..\include\math.h
 gx_0226\usart.o: ../Task/main_task.h
+gx_0226\usart.o: ../Task/imu_task.h

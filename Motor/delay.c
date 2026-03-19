@@ -1,5 +1,8 @@
 #include "delay.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+
 volatile uint16_t delay_time = 0;
 
 void Delay_Init(void)
@@ -11,6 +14,17 @@ void Delay_Init(void)
 //比HAL_Delay更高精度的延时;S
 void Delay_ms(uint16_t ms)
 {
+    if (ms == 0)
+    {
+        return;
+    }
+
+    if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
+    {
+        vTaskDelay(pdMS_TO_TICKS(ms));
+        return;
+    }
+
     delay_time = 0;
     while (delay_time < ms) {};
 }

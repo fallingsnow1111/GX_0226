@@ -61,4 +61,5 @@ gx_0226\chassis_control_task.o: ../Core/Inc/dma.h
 gx_0226\chassis_control_task.o: ../Motor/motor_control.h
 gx_0226\chassis_control_task.o: ../Task/chassis_control_task.h
 gx_0226\chassis_control_task.o: ../Task/main_task.h
+gx_0226\chassis_control_task.o: ../Task/imu_task.h
 gx_0226\chassis_control_task.o: D:\Keil5_MDK\ARM\ARMCC\Bin\..\include\math.h

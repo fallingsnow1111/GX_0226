@@ -78,8 +78,12 @@ __weak void vApplicationMallocFailedHook(void)
    demo application. If heap_1.c or heap_2.c are used, then the size of the
    heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
    FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
-   to query the size of free heap space that remains (although it does not
-   provide information on how the remaining heap might be fragmented). */
+  to query the size of free heap space that remains (although it does not
+  provide information on how the remaining heap might be fragmented). */
+  taskDISABLE_INTERRUPTS();
+  while (1)
+  {
+  }
 }
 /* USER CODE END 5 */
 

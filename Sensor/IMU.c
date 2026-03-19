@@ -2,7 +2,7 @@
 
 #include "imu_control.h"
 
-#define RING_BUFFER_SIZE 128
+#define RING_BUFFER_SIZE 512
 #define IMU_FRAME_SIZE 11
 
 //配置命令数组
@@ -36,8 +36,6 @@ void  U2_send(uint8_t data)
             break;
         }
     }
-    //清除串口接收端溢出错误标志位，防止外设卡死
-    __HAL_UART_CLEAR_OREFLAG(&huart2);
 }
 
 void U2_writebuf(uint8_t* buf, uint8_t len)
@@ -66,6 +64,7 @@ static uint8_t RingBuffer_Peek(uint16_t offset)
 void IMU_Receive_Init(void)
 {
     read_index = 0;
+
     __HAL_UART_CLEAR_OREFLAG(&huart2);
     __HAL_UART_CLEAR_IDLEFLAG(&huart2);
 
@@ -74,7 +73,41 @@ void IMU_Receive_Init(void)
         Error_Handler();
     }
 
-    __HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
+    // 仅开启错误中断；数据解析放到周期任务中执行
+    __HAL_UART_ENABLE_IT(&huart2, UART_IT_ERR);
+}
+
+void IMU_Process(void)
+{
+    uint16_t write_idx = RING_BUFFER_SIZE - __HAL_DMA_GET_COUNTER(&hdma_usart2_rx);
+
+    while (RingBuffer_GetCount(write_idx) >= IMU_FRAME_SIZE)
+    {
+        if (RingBuffer_Peek(0) == 0x55 && RingBuffer_Peek(1) == 0x53)
+        {
+            uint8_t sum = 0;
+            for (int i = 0; i < 10; i++)
+            {
+                sum += RingBuffer_Peek(i);
+            }
+
+            if (sum == RingBuffer_Peek(10))
+            {
+                uint8_t low = RingBuffer_Peek(6);
+                uint8_t high = RingBuffer_Peek(7);
+                int16_t raw_yaw = (int16_t)(((uint16_t)high << 8) | low);
+                float new_yaw = (float)raw_yaw / 32768.0f * 180.0f;
+
+                imu.yaw = 0.9f * new_yaw + 0.1f * imu.yaw;
+                mpu_flash = ~mpu_flash;
+
+                read_index = (read_index + IMU_FRAME_SIZE) % RING_BUFFER_SIZE;
+                continue;
+            }
+        }
+
+        read_index = (read_index + 1) % RING_BUFFER_SIZE;
+    }
 }
 
 void IMU_SetZero(void)
@@ -110,39 +143,14 @@ void USART2_IRQHandler(void)
         __HAL_UART_CLEAR_OREFLAG(&huart2);
     }
 
-    if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE))
+    if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_NE))
     {
-        __HAL_UART_CLEAR_IDLEFLAG(&huart2);
+        __HAL_UART_CLEAR_NEFLAG(&huart2);
+    }
 
-        uint16_t write_idx = RING_BUFFER_SIZE - __HAL_DMA_GET_COUNTER(&hdma_usart2_rx);
-
-        while (RingBuffer_GetCount(write_idx) >= IMU_FRAME_SIZE)
-        {
-            if (RingBuffer_Peek(0) == 0x55 && RingBuffer_Peek(1) == 0x53)
-            {
-                uint8_t sum = 0;
-                for (int i = 0; i < 10; i++)
-                {
-                    sum += RingBuffer_Peek(i);
-                }
-
-                if (sum == RingBuffer_Peek(10))
-                {
-                    uint8_t low = RingBuffer_Peek(6);
-                    uint8_t high = RingBuffer_Peek(7);
-                    int16_t raw_yaw = (int16_t)(((uint16_t)high << 8) | low);
-                    float new_yaw = (float)raw_yaw / 32768.0f * 180.0f;
-
-                    imu.yaw = 0.9f * new_yaw + 0.1f * imu.yaw;
-                    mpu_flash = ~mpu_flash;
-
-                    read_index = (read_index + IMU_FRAME_SIZE) % RING_BUFFER_SIZE;
-                    continue;
-                }
-            }
-
-            read_index = (read_index + 1) % RING_BUFFER_SIZE;
-        }
+    if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_FE))
+    {
+        __HAL_UART_CLEAR_FEFLAG(&huart2);
     }
 }
 

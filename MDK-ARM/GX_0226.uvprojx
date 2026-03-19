@@ -1767,6 +1767,16 @@
               <FileType>5</FileType>
               <FilePath>..\Task\main_task.h</FilePath>
             </File>
+            <File>
+              <FileName>imu_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Task\imu_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>imu_task.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Task\imu_task.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -62,3 +62,4 @@ gx_0226\gpio.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 gx_0226\gpio.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 gx_0226\gpio.o: D:\Keil5_MDK\ARM\ARMCC\Bin\..\include\math.h
 gx_0226\gpio.o: ../Task/main_task.h
+gx_0226\gpio.o: ../Task/imu_task.h

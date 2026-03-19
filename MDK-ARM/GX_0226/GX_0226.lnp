@@ -48,6 +48,7 @@
 "gx_0226\chassis_control_task.o"
 "gx_0226\start_task.o"
 "gx_0226\main_task.o"
+"gx_0226\imu_task.o"
 --strict --scatter "GX_0226\GX_0226.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

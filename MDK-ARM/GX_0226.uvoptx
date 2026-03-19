@@ -157,25 +157,25 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>7</LineNumber>
+          <LineNumber>179</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134225912</Address>
+          <Address>134232418</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\MyNVIC\myNVIC.c</Filename>
+          <Filename>..\Task\chassis_control_task.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\GX_0226\../MyNVIC/myNVIC.c\7</Expression>
+          <Expression>\\GX_0226\../Task/chassis_control_task.c\179</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>29</LineNumber>
+          <LineNumber>53</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134227956</Address>
+          <Address>134228260</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -184,14 +184,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\Task\main_task.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\GX_0226\../Task/main_task.c\29</Expression>
+          <Expression>\\GX_0226\../Task/main_task.c\53</Expression>
         </Bp>
         <Bp>
           <Number>2</Number>
           <Type>0</Type>
-          <LineNumber>29</LineNumber>
+          <LineNumber>53</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134227970</Address>
+          <Address>134228276</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -200,55 +200,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\Task\main_task.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\GX_0226\../Task/main_task.c\29</Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>17</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>startup_stm32f750xx.s</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>4</Number>
-          <Type>0</Type>
-          <LineNumber>33</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>startup_stm32f750xx.s</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>5</Number>
-          <Type>0</Type>
-          <LineNumber>17</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\Task\start_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\GX_0226\../Task/main_task.c\53</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -256,26 +208,6 @@
           <count>0</count>
           <WinNumber>1</WinNumber>
           <ItemText>imu</ItemText>
-        </Ww>
-        <Ww>
-          <count>1</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>write_idx</ItemText>
-        </Ww>
-        <Ww>
-          <count>2</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>read_index</ItemText>
-        </Ww>
-        <Ww>
-          <count>3</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>hdma_usart2_rx</ItemText>
-        </Ww>
-        <Ww>
-          <count>4</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>imu_rx_buf</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
@@ -1139,6 +1071,30 @@
       <bDave2>0</bDave2>
       <PathWithFileName>..\Task\main_task.h</PathWithFileName>
       <FilenameWithoutPath>main_task.h</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>61</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Task\imu_task.c</PathWithFileName>
+      <FilenameWithoutPath>imu_task.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>62</FileNumber>
+      <FileType>5</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Task\imu_task.h</PathWithFileName>
+      <FilenameWithoutPath>imu_task.h</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
