@@ -4,7 +4,7 @@ TaskHandle_t IMU_Task_Handle;
 
 #define IMU_TASK_STACK_SIZE 256
 #define IMU_TASK_PRIORITY 5
-#define IMU_TASK_PERIOD_MS 5
+#define IMU_TASK_PERIOD_MS 20
 
 void IMU_Task(void *pvParameters)
 {

@@ -2,6 +2,8 @@
 
 #include <string.h>
 
+#include "FreeRTOS.h"
+#include "task.h"
 #include "delay.h"
 
 // 电机相关命令帧定义
@@ -11,11 +13,21 @@
 #define MOTOR_CMD_SPEED_CTRL        0xF6
 #define MOTOR_FRAME_END             0x6B
 
-//step angle division 1.8/16=0.11255 degree
-// #define Angle_division 16
+#define MOTOR_POSITION_FRAME_LEN    13
+#define MOTOR_POSITION_MODE_REL_LAST_CMD 0x00
+#define MOTOR_POSITION_MODE_ABS_ZERO     0x01
+#define MOTOR_POSITION_MODE_REL_CURRENT  0x02
+#define MOTOR_POSITION_SPEED_RPM         600
+#define MOTOR_POSITION_ACC               120
+#define UART3_TX_TIMEOUT_MS              20U
+
+#define MOTOR1_GAIN 1.00f
+#define MOTOR2_GAIN 1.00f
+#define MOTOR3_GAIN 0.95f
+#define MOTOR4_GAIN 1.00f
+
 #define magic_number 14  // some magic number for position conversion
 
-MOTOR_SPEED_t car_setspeed;
 volatile struct CHECK_FLAG_t motor_check;
 
 struct MOTOR_DATA motor1;
@@ -100,17 +112,69 @@ static void Motor_ParseAckFrame(const uint8_t* frame)
 // Reception buffer
 static uint8_t RX_data[RXdat_maxsize]={0};
 
+static HAL_StatusTypeDef Uart3_TxDma_WaitReady(uint32_t timeout_ms)
+{
+    uint32_t start = HAL_GetTick();
+
+    while (huart3.gState != HAL_UART_STATE_READY)
+    {
+        if ((HAL_GetTick() - start) >= timeout_ms)
+        {
+            return HAL_TIMEOUT;
+        }
+
+        if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
+        {
+            vTaskDelay(pdMS_TO_TICKS(1));
+        }
+        else
+        {
+            HAL_Delay(1);
+        }
+    }
+
+    return HAL_OK;
+}
+
 void uart3WriteBuf(uint8_t *buf, uint8_t len)
 {
-    // 阻塞发送，等待发送完成
-    HAL_UART_Transmit(&huart3, buf, len, 20);
+    if (Uart3_TxDma_WaitReady(UART3_TX_TIMEOUT_MS) != HAL_OK)
+    {
+        (void)HAL_UART_Transmit(&huart3, buf, len, UART3_TX_TIMEOUT_MS);
+        return;
+    }
+
+    if (HAL_UART_Transmit_DMA(&huart3, buf, len) != HAL_OK)
+    {
+        (void)HAL_UART_Transmit(&huart3, buf, len, UART3_TX_TIMEOUT_MS);
+        return;
+    }
+
+    if (Uart3_TxDma_WaitReady(UART3_TX_TIMEOUT_MS) != HAL_OK)
+    {
+        (void)HAL_UART_Transmit(&huart3, buf, len, UART3_TX_TIMEOUT_MS);
+    }
+}
+
+static void Motor_Send_Position_Sync(uint8_t mode)
+{
+    Send_Position_together((int)motor1.target_angle,
+                           (int)motor2.target_angle,
+                           (int)motor3.target_angle,
+                           (int)motor4.target_angle,
+                           mode);
+
+    uart3WriteBuf(LB_send, MOTOR_POSITION_FRAME_LEN);
+    uart3WriteBuf(LF_send, MOTOR_POSITION_FRAME_LEN);
+    uart3WriteBuf(RF_send, MOTOR_POSITION_FRAME_LEN);
+    uart3WriteBuf(RB_send, MOTOR_POSITION_FRAME_LEN);
+
+    // 所有轴参数下发后，再统一触发同步启动
+    Send_motor_together();
 }
 
 void Motor_Init(void)
 {
-    car_setspeed.x_setpeed = 0.0f;
-    car_setspeed.y_setpeed = 0.0f;
-    car_setspeed.w_setpeed = 0.0f;
     motor1.target_angle = 0;
     motor1.actual_angle = 0;
     motor2.target_angle = 0;
@@ -119,9 +183,8 @@ void Motor_Init(void)
     motor3.actual_angle = 0;
     motor4.target_angle = 0;
     motor4.actual_angle = 0;
-    // __HAL_UART_ENABLE_IT(&huart3, UART_IT_RXNE); // Enable USART3 interrupt
-    //开启dma接收，检测到空闲则产生中断并停止
-    HAL_UARTEx_ReceiveToIdle_DMA(&huart3, RX_data, RXdat_maxsize); // Start DMA reception
+    // 开启DMA接收，检测到空闲则产生回调
+    HAL_UARTEx_ReceiveToIdle_DMA(&huart3, RX_data, RXdat_maxsize);
 }
 
 //输入4个电机速度，单位rpm，16位有符号整数，范围-32768~32767
@@ -157,11 +220,6 @@ void Motor_Send_Speed_together(float LB, float LF, float RF, float RB)
         temp[i][0] = var + 1;   // Motor ID
         temp[i][1] = 0xF6;      // Command for speed setting
 
-        // if (__fbs(tempspeed) > 32767)
-        // {
-        //     //空逻辑？
-        // }
-
         if (tempspeed > 0)
         {
             temp[i][2] = 0x00;
@@ -175,8 +233,8 @@ void Motor_Send_Speed_together(float LB, float LF, float RF, float RB)
             temp[i][3] = (tempspeed >> 8) & 0xFF;   // High byte
             temp[i][4] = (tempspeed & 0xFF);        // Low byte
         }
-        temp[i][5] = 0xC8;     //Acceleration
-        temp[i][6] = 0x00;     // Multi-machine synchronization flag,0 for no sync
+        temp[i][5] = 0xC8;     // Acceleration
+        temp[i][6] = 0x01;     // 多机同步标志，1表示缓存后统一触发
         temp[i][7] = 0x6B;     // End byte
     }
 }
@@ -188,6 +246,7 @@ void Send_motor_together(void) {
     data[1] = 0xFF;
     data[2] = 0x66;
     data[3] = 0x6B;
+    uart3WriteBuf(data, 4);
 }
 
 // 读取电机实时位置
@@ -240,10 +299,10 @@ void Send_Position_together(int LB, int LF, int RF, int RB, char mode)
             temppostion = -temppostion;
             temp[i][2] = 0x01;
         }
-        temp[i][3] = 0x2E; // Speed high byte
-        temp[i][4] = 0xE0; // Speed low byte
+        temp[i][3] = (uint8_t)((MOTOR_POSITION_SPEED_RPM >> 8) & 0xFF); // Speed high byte
+        temp[i][4] = (uint8_t)(MOTOR_POSITION_SPEED_RPM & 0xFF);        // Speed low byte
 
-        temp[i][5] = 0xAE; // ACC original
+        temp[i][5] = MOTOR_POSITION_ACC; // ACC
 
         // Pulse position (4 bytes)
         temp[i][6] = (uint8_t)((temppostion * magic_number) >> 24);
@@ -252,7 +311,7 @@ void Send_Position_together(int LB, int LF, int RF, int RB, char mode)
         temp[i][9] = (uint8_t)(temppostion *  magic_number);
 
         temp[i][10] = (uint8_t)mode;    // Absolute/Relative mode
-        temp[i][11] = 0x01;             // Multi-machine sync flag,0 for no sync
+        temp[i][11] = 0x01;             // 多机同步标志，1表示缓存后统一触发
         temp[i][12] = 0x6B;             // End byte
     }
 }
@@ -260,40 +319,51 @@ void Send_Position_together(int LB, int LF, int RF, int RB, char mode)
 void Send_speed_switch(void)
 {
     uart3WriteBuf(LB_send,8);
-    Delay_ms(4);
     uart3WriteBuf(LF_send,8);
-    Delay_ms(4);
-    uart3WriteBuf(RB_send,8);
-    Delay_ms(4);
     uart3WriteBuf(RF_send,8);
-    Delay_ms(4);
+    uart3WriteBuf(RB_send,8);
+
+    // 四轮速度参数都缓存后，统一触发同步启动
+    Send_motor_together();
 }
 
 // 左手坐标系运动解算，逆时针为正
 void Motor_Action_Calculate_target(float vx, float vy, float vw) {
-    __disable_irq();
-    motor1.target_angle = vw + vy + vx; // 1号电机
-    motor2.target_angle = vw + vy - vx; // 2号电机
-    motor3.target_angle = vw - vy - vx; // 3号电机
-    motor4.target_angle = vw - vy + vx; // 4号电机
-    __enable_irq();
+    taskENTER_CRITICAL();
+    motor1.target_angle = (vw + vy + vx) * MOTOR1_GAIN; // 1号电机
+    motor2.target_angle = (vw + vy - vx) * MOTOR2_GAIN; // 2号电机
+    motor3.target_angle = (vw - vy - vx) * MOTOR3_GAIN; // 3号电机
+    motor4.target_angle = (vw - vy + vx) * MOTOR4_GAIN; // 4号电机
+    taskEXIT_CRITICAL();
 }
 
 // 位置解算，计算实际位置
 void Motor_Action_Calculate_actual(volatile float *actual_x, volatile float *actual_y, volatile float *actual_w) {
-    __disable_irq();
+    taskENTER_CRITICAL();
     *actual_x = (motor1.actual_angle - motor2.actual_angle - motor3.actual_angle + motor4.actual_angle) / 4.0f;
     *actual_y = (motor1.actual_angle + motor2.actual_angle - motor3.actual_angle - motor4.actual_angle) / 4.0f;
     *actual_w = (motor1.actual_angle + motor2.actual_angle + motor3.actual_angle + motor4.actual_angle) / 4.0f;
-    __enable_irq();
+    taskEXIT_CRITICAL();
 }
 
-//延时分别发送速度指令
+// 发送四轮速度并同步触发执行
 void Motor_setspeed(float vx, float vy, float vw)
 {
     Motor_Action_Calculate_target(vx, vy, vw);
     Motor_Send_Speed_together(motor1.target_angle, motor2.target_angle, motor3.target_angle, motor4.target_angle);
     Send_speed_switch();
+}
+
+void Motor_setposition_relative(float dx, float dy, float dw)
+{
+    Motor_Action_Calculate_target(dx, dy, dw);
+    Motor_Send_Position_Sync(MOTOR_POSITION_MODE_REL_CURRENT);
+}
+
+void Motor_setposition_absolute_zero(float x, float y, float w)
+{
+    Motor_Action_Calculate_target(x, y, w);
+    Motor_Send_Position_Sync(MOTOR_POSITION_MODE_ABS_ZERO);
 }
 
 // 将当前位置角度清零
