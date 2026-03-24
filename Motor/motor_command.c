@@ -21,11 +21,6 @@
 #define MOTOR_POSITION_ACC               120
 #define UART3_TX_TIMEOUT_MS              20U
 
-#define MOTOR1_GAIN 1.00f
-#define MOTOR2_GAIN 1.00f
-#define MOTOR3_GAIN 0.95f
-#define MOTOR4_GAIN 1.00f
-
 #define magic_number 14  // some magic number for position conversion
 
 volatile struct CHECK_FLAG_t motor_check;
@@ -136,6 +131,7 @@ static HAL_StatusTypeDef Uart3_TxDma_WaitReady(uint32_t timeout_ms)
     return HAL_OK;
 }
 
+// 发送数据到UART3，优先使用DMA，如果DMA不可用则回退到阻塞传输
 void uart3WriteBuf(uint8_t *buf, uint8_t len)
 {
     if (Uart3_TxDma_WaitReady(UART3_TX_TIMEOUT_MS) != HAL_OK)
@@ -330,10 +326,10 @@ void Send_speed_switch(void)
 // 左手坐标系运动解算，逆时针为正
 void Motor_Action_Calculate_target(float vx, float vy, float vw) {
     taskENTER_CRITICAL();
-    motor1.target_angle = (vw + vy + vx) * MOTOR1_GAIN; // 1号电机
-    motor2.target_angle = (vw + vy - vx) * MOTOR2_GAIN; // 2号电机
-    motor3.target_angle = (vw - vy - vx) * MOTOR3_GAIN; // 3号电机
-    motor4.target_angle = (vw - vy + vx) * MOTOR4_GAIN; // 4号电机
+    motor1.target_angle = (vw + vy + vx); // 1号电机
+    motor2.target_angle = (vw + vy - vx); // 2号电机
+    motor3.target_angle = (vw - vy - vx); // 3号电机
+    motor4.target_angle = (vw - vy + vx); // 4号电机
     taskEXIT_CRITICAL();
 }
 

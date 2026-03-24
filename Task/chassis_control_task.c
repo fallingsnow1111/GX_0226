@@ -127,7 +127,7 @@ void chassis_control_init(void)
     segment_zero_y = 0.0f;
     segment_zero_w = 0.0f;
 
-    car.IMU_modeable = unable;
+    car.IMU_modeable = enable;
     car.ODOM_modeable = enable;
 }
 
