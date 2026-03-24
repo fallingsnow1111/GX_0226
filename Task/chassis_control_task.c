@@ -8,10 +8,14 @@
 #define ORIENTATION_THRESHOLD 1.0f //姿态误差阈值
 #define MIN_TRANSLATION_OUTPUT 3.0f //最小平移输出
 #define NEAR_TARGET_WINDOW 100.0f //近目标减速窗口
-#define NEAR_TARGET_SCALE 0.5f //近目标速度缩放
 #define HEADING_HOLD_GAIN 0.8f //平移时角度锁定补偿
+#define PLAN_BRAKE_ACC_XY 5.0f //平移刹车规划加速度，用于sqrt(2*a*|err|)
+#define PLAN_BRAKE_ACC_W  8.0f //旋转刹车规划加速度，用于sqrt(2*a*|err|)
+#define PLAN_MAX_DV_XY_PER_CYCLE 15.0f //10ms周期下每个控制周期的平移最大速度变化
+#define PLAN_MAX_DW_PER_CYCLE 7.5f //10ms周期下每个控制周期的角速度最大变化
 #define ALL_MOTOR_FEEDBACK_READY 0x0F //所有电机反馈就绪标志
-#define FINISH_STABLE_COUNT 3
+#define FINISH_STABLE_COUNT 6 //10ms周期下约60ms稳定判定
+#define LOST_FEEDBACK_STOP_COUNT 10 //10ms周期下约100ms失联停车
 
 TaskHandle_t Chassis_Control_Task_Handle;
 
@@ -30,6 +34,9 @@ static struct PID_struct chassis_pid_w;
 static float x_c_output = 0.0f; //X轴速度输出
 static float y_c_output = 0.0f; //Y轴速度输出
 static float w_c_output = 0.0f; //角速度输出
+static float x_plan_output = 0.0f; //规划后的X轴速度输出
+static float y_plan_output = 0.0f; //规划后的Y轴速度输出
+static float w_plan_output = 0.0f; //规划后的角速度输出
 
 // 角度误差计算函数
 static float angle_error_deg(float target_angle, float actual_angle) {
@@ -65,6 +72,37 @@ static float apply_deadzone(float output,
     return output;
 }
 
+static float limit_delta(float target, float current, float max_delta)
+{
+    float delta = target - current;
+
+    if (delta > max_delta)
+    {
+        delta = max_delta;
+    }
+    else if (delta < -max_delta)
+    {
+        delta = -max_delta;
+    }
+
+    return current + delta;
+}
+
+static float clamp_by_abs_limit(float value, float abs_limit)
+{
+    if (value > abs_limit)
+    {
+        return abs_limit;
+    }
+
+    if (value < -abs_limit)
+    {
+        return -abs_limit;
+    }
+
+    return value;
+}
+
 static uint8_t Chassis_IsFinishedByError(float err_x, float err_y, float err_w)
 {
     return (fabsf(err_x) <= POSITION_THRESHOLD
@@ -74,9 +112,9 @@ static uint8_t Chassis_IsFinishedByError(float err_x, float err_y, float err_w)
 
 void Get_Chassis_c_output(float *x_output, float *y_output, float *w_output)
 {
-    *x_output = x_c_output;
-    *y_output = y_c_output;
-    *w_output = w_c_output;
+    *x_output = x_plan_output;
+    *y_output = y_plan_output;
+    *w_output = w_plan_output;
 }
 
 // 里程计归零函数
@@ -126,6 +164,10 @@ void chassis_control_init(void)
     segment_zero_x = 0.0f;
     segment_zero_y = 0.0f;
     segment_zero_w = 0.0f;
+
+    x_plan_output = 0.0f;
+    y_plan_output = 0.0f;
+    w_plan_output = 0.0f;
 
     car.IMU_modeable = enable;
     car.ODOM_modeable = enable;
@@ -177,19 +219,15 @@ void chassis_control(void)
         y_c_output = PID_Compute(&chassis_pid_y, car.target_y, rel_actual_y);
         w_c_output = PID_Compute(&chassis_pid_w, car.target_w, rel_actual_w);
 
-        if (fabsf(err_x) < NEAR_TARGET_WINDOW)
-        {
-            x_c_output *= NEAR_TARGET_SCALE;
-        }
-        if (fabsf(err_y) < NEAR_TARGET_WINDOW)
-        {
-            y_c_output *= NEAR_TARGET_SCALE;
-        }
-
         if (fabsf(car.target_w) < 1e-3f)
         {
             w_c_output += -HEADING_HOLD_GAIN * rel_actual_w;
         }
+
+        // 基于剩余距离约束速度上限：v <= sqrt(2*a*|err|)
+        x_c_output = clamp_by_abs_limit(x_c_output, sqrtf(2.0f * PLAN_BRAKE_ACC_XY * fabsf(err_x)));
+        y_c_output = clamp_by_abs_limit(y_c_output, sqrtf(2.0f * PLAN_BRAKE_ACC_XY * fabsf(err_y)));
+        w_c_output = clamp_by_abs_limit(w_c_output, sqrtf(2.0f * PLAN_BRAKE_ACC_W * fabsf(err_w)));
 
         x_min_output = (fabsf(err_x) < NEAR_TARGET_WINDOW) ? 0.0f : MIN_TRANSLATION_OUTPUT;
         y_min_output = (fabsf(err_y) < NEAR_TARGET_WINDOW) ? 0.0f : MIN_TRANSLATION_OUTPUT;
@@ -203,6 +241,9 @@ void chassis_control(void)
 
         if(Chassis_IsFinishedByError(err_x, err_y, err_w))
         {
+            x_plan_output = 0.0f;
+            y_plan_output = 0.0f;
+            w_plan_output = 0.0f;
             Motor_setspeed(0.0f, 0.0f, 0.0f);
 
             if (finish_stable_count < FINISH_STABLE_COUNT)
@@ -219,7 +260,12 @@ void chassis_control(void)
         {
             finish_stable_count = 0;
             MOTOR_ACTION_FINISH_FLAG = Incomplete; //动作未完成
-            Motor_setspeed(x_c_output, y_c_output, w_c_output);
+
+            x_plan_output = limit_delta(x_c_output, x_plan_output, PLAN_MAX_DV_XY_PER_CYCLE);
+            y_plan_output = limit_delta(y_c_output, y_plan_output, PLAN_MAX_DV_XY_PER_CYCLE);
+            w_plan_output = limit_delta(w_c_output, w_plan_output, PLAN_MAX_DW_PER_CYCLE);
+
+            Motor_setspeed(x_plan_output, y_plan_output, w_plan_output);
         }
     }
     else
@@ -229,8 +275,11 @@ void chassis_control(void)
             MOTOR_ACTION_FINISH_FLAG = Incomplete; //如果之前未完成，继续保持未完成状态
         }
 
-        if(++lost_feedback_count >= 5) {
+        if(++lost_feedback_count >= LOST_FEEDBACK_STOP_COUNT) {
             //如果连续多次丢失反馈，停止电机以防止失控
+            x_plan_output = 0.0f;
+            y_plan_output = 0.0f;
+            w_plan_output = 0.0f;
             Motor_setspeed(0.0f, 0.0f, 0.0f);
             finish_stable_count = 0;
         }
@@ -242,7 +291,7 @@ void chassis_control(void)
 void Chassis_Control_Task(void *pvParameters)
 {
     TickType_t xLastWakeTime = xTaskGetTickCount();
-    const TickType_t xFrequency = pdMS_TO_TICKS(20); // 20ms周期
+    const TickType_t xFrequency = pdMS_TO_TICKS(10); // 10ms周期
 
     while (1)
     {
