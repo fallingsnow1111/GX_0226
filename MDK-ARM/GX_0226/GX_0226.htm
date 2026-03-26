@@ -3,7 +3,7 @@
 <title>Static Call Graph - [GX_0226\GX_0226.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image GX_0226\GX_0226.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue Mar 24 22:22:59 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu Mar 26 19:17:42 2026
 <BR><P>
 <H3>Maximum Stack Usage =        248 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -651,6 +651,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_MspInit
 <LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
+<LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_Init
 </UL>
 
 <P><STRONG><a name="[17d]"></a>__aeabi_memclr8</STRONG> (Thumb, 0 bytes, Stack size 4 bytes, rt_memclr_w.o(.text), UNUSED)
@@ -1361,10 +1362,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_setspeed
 </UL>
 
-<P><STRONG><a name="[e9]"></a>Motor_Init</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, motor_command.o(i.Motor_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = Motor_Init &rArr; HAL_UARTEx_ReceiveToIdle_DMA &rArr; UART_Start_Receive_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
+<P><STRONG><a name="[e9]"></a>Motor_Init</STRONG> (Thumb, 70 bytes, Stack size 8 bytes, motor_command.o(i.Motor_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = Motor_Init &rArr; HAL_UARTEx_ReceiveToIdle_DMA &rArr; UART_Start_Receive_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UARTEx_ReceiveToIdle_DMA
+<LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_Task
 </UL>
@@ -1394,7 +1396,7 @@ Global Symbols
 <LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis_control
 </UL>
 
-<P><STRONG><a name="[d4]"></a>My_UART3_IRQHandler</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, motor_command.o(i.My_UART3_IRQHandler))
+<P><STRONG><a name="[d4]"></a>My_UART3_IRQHandler</STRONG> (Thumb, 48 bytes, Stack size 8 bytes, motor_command.o(i.My_UART3_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = My_UART3_IRQHandler &rArr; HAL_UARTEx_ReceiveToIdle_DMA &rArr; UART_Start_Receive_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UARTEx_ReceiveToIdle_DMA
@@ -1558,8 +1560,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f750xx.o(RESET)
 </UL>
-<P><STRONG><a name="[105]"></a>USART3_Process_data</STRONG> (Thumb, 158 bytes, Stack size 16 bytes, motor_command.o(i.USART3_Process_data))
-<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = USART3_Process_data &rArr; Motor_ConsumeBytes
+<P><STRONG><a name="[105]"></a>USART3_Process_data</STRONG> (Thumb, 200 bytes, Stack size 24 bytes, motor_command.o(i.USART3_Process_data))
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = USART3_Process_data &rArr; Motor_ConsumeBytes
 </UL>
 <BR>[Calls]<UL><LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_ParsePositionFrame
 <LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_IsValidID
@@ -1584,7 +1586,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis_control
 </UL>
 
-<P><STRONG><a name="[9f]"></a>chassis_control</STRONG> (Thumb, 640 bytes, Stack size 48 bytes, chassis_control_task.o(i.chassis_control))
+<P><STRONG><a name="[9f]"></a>chassis_control</STRONG> (Thumb, 676 bytes, Stack size 48 bytes, chassis_control_task.o(i.chassis_control))
 <BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = chassis_control &rArr; Motor_setspeed &rArr; Send_speed_switch &rArr; Send_motor_together &rArr; uart3WriteBuf &rArr; Uart3_TxDma_WaitReady &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Compute
@@ -2439,7 +2441,7 @@ Local Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART3_Process_data
 </UL>
 
-<P><STRONG><a name="[110]"></a>Motor_ParsePositionFrame</STRONG> (Thumb, 134 bytes, Stack size 0 bytes, motor_command.o(i.Motor_ParsePositionFrame))
+<P><STRONG><a name="[110]"></a>Motor_ParsePositionFrame</STRONG> (Thumb, 166 bytes, Stack size 0 bytes, motor_command.o(i.Motor_ParsePositionFrame))
 <BR><BR>[Called By]<UL><LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART3_Process_data
 </UL>
 

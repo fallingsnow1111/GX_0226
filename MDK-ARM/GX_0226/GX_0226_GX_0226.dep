@@ -42,7 +42,7 @@ I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
 I (../Core/Inc/usart.h)(0x69AA963B)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
@@ -106,7 +106,7 @@ I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
 I (../Core/Inc/usart.h)(0x69AA963B)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
@@ -177,7 +177,7 @@ I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
 I (../Core/Inc/usart.h)(0x69AA963B)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
@@ -232,7 +232,7 @@ I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
 I (../Core/Inc/usart.h)(0x69AA963B)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h)(0x694770F2)
@@ -293,7 +293,7 @@ I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
 I (../Core/Inc/usart.h)(0x69AA963B)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
@@ -355,7 +355,7 @@ I (../Motor/imu_control.h)(0x6975DFBC)
 I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
@@ -417,7 +417,7 @@ I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
 I (../Core/Inc/usart.h)(0x69AA963B)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
@@ -480,7 +480,7 @@ I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
 I (../Core/Inc/usart.h)(0x69AA963B)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
@@ -1306,9 +1306,9 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h)(0x694770F2
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/task.h)(0x694770F2)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/list.h)(0x694770F2)
 F (..\MyDefinition\Struct_encapsulation.h)(0x69AE8F49)()
-F (..\MyNVIC\myNVIC.c)(0x69C29A1E)(--c99 -c --cpu Cortex-M7.fp.sp -g -O2 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I ../Drivers/CMSIS/Include -I ../MyDefinition -I ../MyNVIC -I ../Sensor -I ../Motor -I ../Task -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1-I.\RTE\_GX_0226-ID:\Keil5_Pack\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="540" -DSTM32F750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F750xx-o gx_0226\mynvic.o --omf_browse gx_0226\mynvic.crf --depend gx_0226\mynvic.d)
+F (..\MyNVIC\myNVIC.c)(0x69C50D5D)(--c99 -c --cpu Cortex-M7.fp.sp -g -O2 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I ../Drivers/CMSIS/Include -I ../MyDefinition -I ../MyNVIC -I ../Sensor -I ../Motor -I ../Task -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1-I.\RTE\_GX_0226-ID:\Keil5_Pack\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="540" -DSTM32F750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F750xx-o gx_0226\mynvic.o --omf_browse gx_0226\mynvic.crf --depend gx_0226\mynvic.d)
 I (..\MyNVIC\myNVIC.h)(0x69AC224E)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/usart.h)(0x69AA963B)
 I (../Core/Inc/main.h)(0x69BBD6D9)
 I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h)(0x69477145)
@@ -1412,7 +1412,7 @@ I (../Motor/imu_control.h)(0x6975DFBC)
 I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
@@ -1475,7 +1475,7 @@ I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
 I (../Core/Inc/usart.h)(0x69AA963B)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
@@ -1540,7 +1540,7 @@ I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h)(0x69477145)
 I (../Motor/delay.h)(0x6975EAB0)
 I (../Core/Inc/tim.h)(0x69AA96CD)
 I (../Motor/imu_control.h)(0x6975DFBC)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
@@ -1563,8 +1563,8 @@ I (../Task/main_task.h)(0x69AEC0E5)
 I (../Task/imu_task.h)(0x69BBD6D9)
 I (D:\Keil5_MDK\ARM\ARMCC\include\wchar.h)(0x5D9B348A)
 F (..\Motor\imu_control.h)(0x6975DFBC)()
-F (..\Motor\motor_command.c)(0x69C29D57)(--c99 -c --cpu Cortex-M7.fp.sp -g -O2 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I ../Drivers/CMSIS/Include -I ../MyDefinition -I ../MyNVIC -I ../Sensor -I ../Motor -I ../Task -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1-I.\RTE\_GX_0226-ID:\Keil5_Pack\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="540" -DSTM32F750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F750xx-o gx_0226\motor_command.o --omf_browse gx_0226\motor_command.crf --depend gx_0226\motor_command.d)
-I (..\Motor\motor_command.h)(0x69C29D57)
+F (..\Motor\motor_command.c)(0x69C515B9)(--c99 -c --cpu Cortex-M7.fp.sp -g -O2 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I ../Drivers/CMSIS/Include -I ../MyDefinition -I ../MyNVIC -I ../Sensor -I ../Motor -I ../Task -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1-I.\RTE\_GX_0226-ID:\Keil5_Pack\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="540" -DSTM32F750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F750xx-o gx_0226\motor_command.o --omf_browse gx_0226\motor_command.crf --depend gx_0226\motor_command.d)
+I (..\Motor\motor_command.h)(0x69C515B9)
 I (../Core/Inc/usart.h)(0x69AA963B)
 I (../Core/Inc/main.h)(0x69BBD6D9)
 I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h)(0x69477145)
@@ -1605,7 +1605,7 @@ I (../Motor/imu_control.h)(0x6975DFBC)
 I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h)(0x694770F2)
@@ -1627,8 +1627,8 @@ I (../Task/main_task.h)(0x69AEC0E5)
 I (../Task/imu_task.h)(0x69BBD6D9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (D:\Keil5_MDK\ARM\ARMCC\include\string.h)(0x5D9B3488)
-F (..\Motor\motor_command.h)(0x69C29D57)()
-F (..\Motor\motor_control.c)(0x69C29D57)(--c99 -c --cpu Cortex-M7.fp.sp -g -O2 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I ../Drivers/CMSIS/Include -I ../MyDefinition -I ../MyNVIC -I ../Sensor -I ../Motor -I ../Task -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1-I.\RTE\_GX_0226-ID:\Keil5_Pack\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="540" -DSTM32F750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F750xx-o gx_0226\motor_control.o --omf_browse gx_0226\motor_control.crf --depend gx_0226\motor_control.d)
+F (..\Motor\motor_command.h)(0x69C515B9)()
+F (..\Motor\motor_control.c)(0x69C50D5D)(--c99 -c --cpu Cortex-M7.fp.sp -g -O2 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I ../Drivers/CMSIS/Include -I ../MyDefinition -I ../MyNVIC -I ../Sensor -I ../Motor -I ../Task -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1-I.\RTE\_GX_0226-ID:\Keil5_Pack\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="540" -DSTM32F750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F750xx-o gx_0226\motor_control.o --omf_browse gx_0226\motor_control.crf --depend gx_0226\motor_control.d)
 I (..\Motor\motor_control.h)(0x69AEBC3F)
 I (../Core/Inc/main.h)(0x69BBD6D9)
 I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h)(0x69477145)
@@ -1670,7 +1670,7 @@ I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
 I (../Core/Inc/usart.h)(0x69AA963B)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
@@ -1697,7 +1697,7 @@ I (..\Motor\pid.h)(0x6974DD48)
 I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (D:\Keil5_MDK\ARM\ARMCC\include\stdint.h)(0x5D9B3488)
 F (..\Motor\pid.h)(0x6974DD48)()
-F (..\Task\chassis_control_task.c)(0x69C29D57)(--c99 -c --cpu Cortex-M7.fp.sp -g -O2 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I ../Drivers/CMSIS/Include -I ../MyDefinition -I ../MyNVIC -I ../Sensor -I ../Motor -I ../Task -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1-I.\RTE\_GX_0226-ID:\Keil5_Pack\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="540" -DSTM32F750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F750xx-o gx_0226\chassis_control_task.o --omf_browse gx_0226\chassis_control_task.crf --depend gx_0226\chassis_control_task.d)
+F (..\Task\chassis_control_task.c)(0x69C515D2)(--c99 -c --cpu Cortex-M7.fp.sp -g -O2 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc -I ../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I ../Drivers/CMSIS/Include -I ../MyDefinition -I ../MyNVIC -I ../Sensor -I ../Motor -I ../Task -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1-I.\RTE\_GX_0226-ID:\Keil5_Pack\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="540" -DSTM32F750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F750xx-o gx_0226\chassis_control_task.o --omf_browse gx_0226\chassis_control_task.crf --depend gx_0226\chassis_control_task.d)
 I (..\Task\chassis_control_task.h)(0x69C29D57)
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h)(0x694770F2)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x694770F2)
@@ -1753,7 +1753,7 @@ I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
 I (../Core/Inc/usart.h)(0x69AA963B)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
@@ -1817,7 +1817,7 @@ I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
 I (../Core/Inc/usart.h)(0x69AA963B)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
@@ -1867,7 +1867,7 @@ I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
 I (../Core/Inc/usart.h)(0x69AA963B)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)
@@ -1931,7 +1931,7 @@ I (../MyDefinition/Struct_encapsulation.h)(0x69AE8F49)
 I (../Motor/pid.h)(0x6974DD48)
 I (../Sensor/IMU.h)(0x69BBD6D9)
 I (../Core/Inc/usart.h)(0x69AA963B)
-I (../Motor/motor_command.h)(0x69C29D57)
+I (../Motor/motor_command.h)(0x69C515B9)
 I (../Core/Inc/dma.h)(0x69AA963B)
 I (../Motor/motor_control.h)(0x69AEBC3F)
 I (../Task/chassis_control_task.h)(0x69C29D57)

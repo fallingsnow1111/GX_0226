@@ -16,6 +16,19 @@ struct MOTOR_DATA {
     float actual_angle;
 };
 
+typedef struct {
+    uint32_t rx_event_cnt;
+    uint32_t rx_byte_cnt;
+    uint32_t pos_frame_ok_cnt[4];
+    uint32_t ack_frame_ok_cnt;
+    uint32_t invalid_id_cnt;
+    uint32_t invalid_cmd_cnt;
+    uint32_t invalid_tail_cnt;
+    uint32_t rx_cache_overflow_cnt;
+} MOTOR_UART3_DEBUG_t;
+
+extern volatile MOTOR_UART3_DEBUG_t motor_uart3_debug;
+
 void Motor_Init(void);
 void Motor_Send_Speed_together(float LB, float LF, float RF, float RB);
 void Motor_setspeed(float vx, float vy, float vw);

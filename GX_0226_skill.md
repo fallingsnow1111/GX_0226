@@ -22,7 +22,8 @@
 ## Current Known Issues Context
 - 曾出现 `flag_finish` 长期为 0。
 - 曾出现“跑一下就卡住/完全不动”。
-- 已做方向：USART3 发送队列化、DMA完成回调续发、接收回调解析、控制侧反馈位图累积。
+- 已做方向：USART3 发送队列化、DMA完成回调续发、接收回调解析。
+- 当前控制要求：底盘控制按20ms周期执行，必须在单个周期内收齐4路反馈，不做跨周期累积。
 - 最新口头状态：代码可能已回退到梯形加速版本；曾发现电机线松动并已修复，尚待再次上电验证。
 
 ## Working Rules For AI
@@ -33,7 +34,7 @@
 3. 不要直接给“猜测结论”，先用可观测计数器/断点验证。
 4. 调整策略优先级：
    - 先保证链路稳定（不丢帧）
-   - 再优化控制判定（容错/分频）
+   - 再优化控制判定（当前为20ms同周期严格收齐）
 5. 所有改动尽量最小化，避免重构式大改。
 
 ## Debug Checklist (Preferred)
@@ -44,7 +45,7 @@
    - tx_enqueue_fail_cnt, error_cnt
 2. 看关键状态：
    - motor_check.flag_finish
-   - feedback_accum (in Task/chassis_control_task.c)
+   - 同周期是否等于0x0F (in Task/chassis_control_task.c)
 3. 看任务节拍：
    - Chassis control period
    - 位置查询频率

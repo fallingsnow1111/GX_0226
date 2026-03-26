@@ -11,11 +11,11 @@
 #define HEADING_HOLD_GAIN 0.8f //平移时角度锁定补偿
 #define PLAN_BRAKE_ACC_XY 5.0f //平移刹车规划加速度，用于sqrt(2*a*|err|)
 #define PLAN_BRAKE_ACC_W  8.0f //旋转刹车规划加速度，用于sqrt(2*a*|err|)
-#define PLAN_MAX_DV_XY_PER_CYCLE 15.0f //10ms周期下每个控制周期的平移最大速度变化
-#define PLAN_MAX_DW_PER_CYCLE 7.5f //10ms周期下每个控制周期的角速度最大变化
+#define PLAN_MAX_DV_XY_PER_CYCLE 30.0f //20ms周期下每个控制周期的平移最大速度变化
+#define PLAN_MAX_DW_PER_CYCLE 15.0f //20ms周期下每个控制周期的角速度最大变化
 #define ALL_MOTOR_FEEDBACK_READY 0x0F //所有电机反馈就绪标志
-#define FINISH_STABLE_COUNT 6 //10ms周期下约60ms稳定判定
-#define LOST_FEEDBACK_STOP_COUNT 10 //10ms周期下约100ms失联停车
+#define FINISH_STABLE_COUNT 3 //20ms周期下约60ms稳定判定
+#define LOST_FEEDBACK_STOP_COUNT 5 //20ms周期下约100ms失联停车
 
 TaskHandle_t Chassis_Control_Task_Handle;
 
@@ -291,7 +291,7 @@ void chassis_control(void)
 void Chassis_Control_Task(void *pvParameters)
 {
     TickType_t xLastWakeTime = xTaskGetTickCount();
-    const TickType_t xFrequency = pdMS_TO_TICKS(10); // 10ms周期
+    const TickType_t xFrequency = pdMS_TO_TICKS(20); // 20ms周期
 
     while (1)
     {

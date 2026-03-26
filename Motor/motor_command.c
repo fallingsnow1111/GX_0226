@@ -24,6 +24,7 @@
 #define magic_number 14  // some magic number for position conversion
 
 volatile struct CHECK_FLAG_t motor_check;
+volatile MOTOR_UART3_DEBUG_t motor_uart3_debug;
 
 struct MOTOR_DATA motor1;
 struct MOTOR_DATA motor2;
@@ -74,18 +75,22 @@ static void Motor_ParsePositionFrame(const uint8_t* frame)
         case 0x01:
             motor1.actual_angle = angle;
             motor_check.flag_finish |= (1 << 0); // Set bit 0
+            motor_uart3_debug.pos_frame_ok_cnt[0]++;
             break;
         case 0x02:
             motor2.actual_angle = angle;
             motor_check.flag_finish |= (1 << 1); // Set bit 1
+            motor_uart3_debug.pos_frame_ok_cnt[1]++;
             break;
         case 0x03:
             motor3.actual_angle = angle;
             motor_check.flag_finish |= (1 << 2); // Set bit 2
+            motor_uart3_debug.pos_frame_ok_cnt[2]++;
             break;
         case 0x04:
             motor4.actual_angle = angle;
             motor_check.flag_finish |= (1 << 3); // Set bit 3
+            motor_uart3_debug.pos_frame_ok_cnt[3]++;
             break;
         default:
             break; // Invalid ID, ignore
@@ -101,6 +106,7 @@ static void Motor_ParseAckFrame(const uint8_t* frame)
        frame[3] == MOTOR_FRAME_END)
     {
         motor_check.flag_ready = finish; // Set ready flag
+        motor_uart3_debug.ack_frame_ok_cnt++;
     }
 }
 
@@ -179,6 +185,7 @@ void Motor_Init(void)
     motor3.actual_angle = 0;
     motor4.target_angle = 0;
     motor4.actual_angle = 0;
+    memset((void *)&motor_uart3_debug, 0, sizeof(motor_uart3_debug));
     // 开启DMA接收，检测到空闲则产生回调
     HAL_UARTEx_ReceiveToIdle_DMA(&huart3, RX_data, RXdat_maxsize);
 }
@@ -389,6 +396,7 @@ void USART3_Process_data(uint8_t* data, uint8_t len)
     if((uint16_t)(rx_cache_len + len) > sizeof(rx_cache))
     {
         // 如果新数据超过缓存大小，丢弃旧数据
+        motor_uart3_debug.rx_cache_overflow_cnt++;
         rx_cache_len = 0;
     }
 
@@ -400,6 +408,7 @@ void USART3_Process_data(uint8_t* data, uint8_t len)
         if(!Motor_IsValidID(rx_cache[0]))
         {
             // 无效ID，丢弃第一个字节
+            motor_uart3_debug.invalid_id_cnt++;
             Motor_ConsumeBytes(1);
             continue;
         }
@@ -418,6 +427,7 @@ void USART3_Process_data(uint8_t* data, uint8_t len)
         else
         {
             // 无效命令，丢弃第一个字节
+            motor_uart3_debug.invalid_cmd_cnt++;
             Motor_ConsumeBytes(1);
             continue;
         }
@@ -430,6 +440,7 @@ void USART3_Process_data(uint8_t* data, uint8_t len)
         if(rx_cache[expected_len - 1] != MOTOR_FRAME_END)
         {
             // 无效帧，丢弃第一个字节
+            motor_uart3_debug.invalid_tail_cnt++;
             Motor_ConsumeBytes(1);
             continue;
         }
@@ -449,6 +460,9 @@ void USART3_Process_data(uint8_t* data, uint8_t len)
 
 void My_UART3_IRQHandler(uint16_t Size)
 {
+    motor_uart3_debug.rx_event_cnt++;
+    motor_uart3_debug.rx_byte_cnt += Size;
+
     if(Size > 0 && Size <= RXdat_maxsize) {
         USART3_Process_data(RX_data, (uint8_t)Size);
     }
